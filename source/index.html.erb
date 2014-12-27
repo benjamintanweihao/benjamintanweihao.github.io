@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="">
+  <meta name="author" content="Benjamin Tan Wei Hao">
+  <title>Benjamin Tan Wei Hao</title>
+
+  <%= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" %>
+  <%= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" %>
+  <%= stylesheet_link_tag "styles" %>
+
+  <!-- Custom Fonts -->
+  <link href='http://fonts.googleapis.com/css?family=Ubuntu:700' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+</head>
+
+<body id="page-top" class="index">
+  <!-- Navigation -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <!-- Brand and toggle get grouped together for better mobile display -->
+      <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <%= link_to "Blog", "/blog", class: "color1" %>
+          </li>
+          <% %w(books articles speaking code).each_with_index do |section, i| %>
+            <% content_tag :li do %>
+              <%= link_to section.capitalize, "##{section}", class: "page-scroll color#{i+2}" %>
+            <% end %>
+          <% end %>
+        </ul>
+      </div> <!-- /.navbar-collapse -->
+    </div> <!-- /.container -->
+  </nav>
+
+  <!-- Rainbow Bar -->
+  <div class="top-bar"></div>
+
+  <!-- Header -->
+  <header id="top">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2 class="greeting color4">Ohai! I'm</h2>
+          <h1 class="color2">Benjamin Tan</h1>
+          <h2 class="subheader">Software Engineer / Author / Speaker</h2>
+          <ul class="list-inline social-btns">
+            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
+            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
+            <li><a href="#books" class="page-scroll"><i class="fa fa-angle-double-down color3"></i></a></li>
+            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
+            <li><a href="http://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="spacing"></div>
+    </div>
+  </header>
+
+  <!-- Books -->
+  <section id="books">
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-6 text-center">
+          <img src="../images/the_little_elixir_guidebook.png" alt="" class=""><br/>
+          <a href="http://www.exotpbook.com" class="btn" target=_blank><i class="fa fa-2x fa-flask"></i> Go To Book Site</a>
+        </div>  
+
+        <div class="col-md-6">
+          <h2 class="text-center">The Little Elixir Guidebook </h2>
+
+            <p><strong>Note:</strong> This book is going to be published under
+            <a href="http://www.manning.com" target=_blank>Manning Publications</a>! Look out for it real soon!</p>
+
+            <p>
+              In this guidebook, I will show you how to build programs using <a href="http://www.elixir-lang.org" target=_blank>Elixir</a> and OTP. 
+            </p>
+
+            <p>
+              Been meaning to do something useful with functional programming or simply itching for a fun weekend side-project? This book might be just for you. Come rediscover the joy of programming and what it feels like to be a beginner again.
+            </p>
+        </div>  
+      </div>
+      <div class="spacing"></div>
+    </div>
+  </section>
+
+  <!-- Articles -->
+  <section id="articles">
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+
+        <div class="col-md-12 text-center">
+          <h2 >On Writing.</h2>
+           <p>Some of the places where my writing has been featured:</p>
+            <ul class="list-inline articles-btns">
+              <li><a href="http://www.sitepoint.com/author/btan"><img src="../images/articles/sitepoint.png" alt="Sitepoint"></a></li>
+              <li><a href="https://www.digitalocean.com/community/tutorials/how-to-optimize-unicorn-workers-in-a-ruby-on-rails-app"><img src="../images/articles/digitalocean.png" alt=""></a></li>
+              <li><a href="http://blog.nitrous.io/2014/06/03/intro-to-elixir.html"><img src="../images/articles/nitrous.png" class="img-responsive" alt=""></a></li>
+              <li><a href="http://www.neo.com/team/benjamin-tan"><img src="../images/articles/neo.svg" alt=""></a></li>
+            </ul>
+        </div>  
+      </div>
+      <div class="spacing"></div>
+    </div>
+  </section>
+
+  <!-- Speaking -->
+  <section id="speaking">
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2 >On Speaking.</h2>
+           <p>Conferences I have spoken at:</p>
+            <ul class="list-inline speaking-btns">
+              <li><a href="http://confreaks.com/videos/5078-RubyConf2014-rubyists-have-a-sip-of-elixir" target=_blank><img src="../images/speaking/rubyconf2014.png" alt="Sitepoint"></a></li>
+              <li><a href="http://confreaks.com/videos/3845-rdrc2014-ruby-elixir-polyglotting-ftw" target=_blank><img src="../images/speaking/reddotrubyconf.png" alt=""></a></li>
+              <li><a href="https://www.youtube.com/watch?v=vS47DS3tn0k" target=_blank><img src="../images/speaking/geekcampsg.png" alt=""></a></li>
+            </ul>
+        </div>  
+      </div>
+      <div class="spacing"></div>
+    </div>
+  </section>
+
+  <!-- Coding -->
+  <section id="coding">
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2 >On Coding.</h2>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-4 text-center">
+          <h3>CodeRippa</h3>
+          <p>Takes any source code (up to 150 languages) and turn it into a <em>beautiful</em> PDF.</p>
+          <a href="http://code-rippa.heroku.com" target=_blank><img src="../images/coding/coderippa.png" alt=""></a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h3>Bookee|SG</h3>
+          <p>Search for books in the National Library Board of Singapore easily.</p>
+          <a href="https://play.google.com/store/apps/details?id=com.benjamintanweihao.bookeesg"><img src="../images/coding/bookeesg.png" alt=""></a>
+        </div>
+
+        <div class="col-md-4 text-center">
+          <h3>Open Source Contributions</h3>
+          <p>Projects that I've given back to:</p>
+          <ul class="list-unstyled coding-btns">
+            <li><a href="http://www.rubyonrails.org" target=_blank><img src="../images/coding/rails.png" alt="Ruby on Rails"></a></li>
+            <li><a href="http://www.elixir-lang.rg" target=_blank><img src="../images/coding/elixir.png" alt="Elixir"></a></li>
+            <li><a href="https://spreecommerce.com/" target=_blank><img src="../images/coding/spree.png" alt="Spree Commerce"></a></li>
+            <li><a href="https://github.com/phoenixframework" target=_blank><img src="../images/coding/phoenix.png" alt="Phoenix Framework"></a></li>
+          </ul>
+        </div>
+      </div> 
+
+      <div class="col-md-12 text-center">
+        <a href="https://github.com/benjamintanweihao" class="btn" target=_blank><i class="fa fa-2x fa-github"></i>My Github Profile</a> 
+      </div>
+      <div class="spacing"></div>
+    </div>
+  </section>
+
+  <%= partial "footer" %>
+  <%= partial "javascripts" %>
+</body>
+</html>

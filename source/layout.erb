@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Benjamin Tan Wei Hao">
+    <title>Benjamin Tan's Learnings & Writings<%= ' - ' + current_article.title unless current_article.nil? %></title>
+    <%= feed_tag :atom, "#{blog.options.prefix.to_s}/feed.xml", title: "Atom Feed" %>
+
+    <%= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" %>
+    <%= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" %>
+    <%= stylesheet_link_tag "sharrre" %>
+    <%= stylesheet_link_tag "styles" %>
+    <%= stylesheet_link_tag "blog" %>
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="page-top" class="index">
+  
+    <div class="top-bar"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped together for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <%= image_tag "portrait.png", :class => "img-circle avatar-image" %>
+            <span class="avatar-name">Benjamin Tan</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <%= link_to "Archive", "/blog", class: "color1" %>
+            </li>
+            <li>
+              <%= link_to "My Elixir Book", "http://www.exotpbook.com", class: "color2", target: "_blank" %>
+            </li>
+            <li>
+              <%= link_to "Speaking", "http://confreaks.com/presenters/2702-benjamin-tan", class: "color3", target: "_blank" %>
+            </li>
+            <li>
+              <%= link_to "Code", "https://github.com/benjamintanweihao", class: "color4", target: "_blank" %>
+            </li>
+            <li>
+              <%= link_to "About", "/", class: "color5", target: "_blank" %>
+            </li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav>
+
+    <div class="wrapper">
+      <section id="top">
+        <% if current_article %>
+          <%= partial "article_header" %> 
+          <%= partial "social_buttons" %>
+        <% end %>
+      </section>
+
+      <div id="main" role="main">
+        <%= yield %>
+      </div>
+      
+      <%= partial "disqus" if current_article %>
+
+
+      <div class="spacing"></div>
+    </div>
+
+    <%= partial "footer" %>
+    <%= partial "javascripts" %>
+  </body>
+</html>

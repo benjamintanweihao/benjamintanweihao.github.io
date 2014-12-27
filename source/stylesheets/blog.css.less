@@ -1,0 +1,164 @@
+/* Blog Specific Styles */
+@import 'variables';
+@import 'mixins';
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Droid Sans', sans-serif;
+}
+
+h1 {
+  font-size: 3em;	  
+  font-weight: 700;
+  line-height: 1.2em;
+  padding: 0;
+  text-align: center;
+}
+
+h2 {
+  font-size: 2.5em;	  
+  font-weight: 700;
+  line-height: 1.0em;
+  margin-top: 1.6em;
+}
+
+h3 {
+  font-size: 2.0em;	  
+  font-weight: 700;
+  line-height: 1.0em;
+  margin-top: 1.6em;
+}
+
+h4 {
+  font-size: 1.4em;	  
+  font-weight: 700;
+  line-height: 1.0em;
+  margin-top: 1.2em;
+}
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+
+time {
+  color: #ADADAD;
+  display: block;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.wrapper {
+  max-width: -webkit-calc(800px - (30px * 2));
+  max-width: calc(800px - (30px * 2));
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 30px;
+  padding-left: 30px;
+
+  p {
+    margin-top: 1.4em;
+  }
+
+  p, li {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 20px;
+    line-height: 1.6em;
+  }
+
+  pre {
+    margin: 2em 0;
+  }
+}
+
+.author {
+  font-family: 'Georgia', sans-serif;
+  font-size: 1.2em;
+  font-style: italic;
+  margin-top: 1.5em;
+  margin-bottom: 6px;
+  &:before {
+    color: #ADADAD;
+    content: "by ";
+  }
+}
+
+.article-tag {
+  text-transform: uppercase;
+  a {
+    color: @color5;
+    font-size: 0.6em;
+    text-decoration: none;
+  }
+}
+
+.article-entry {
+  border-bottom: 1px dotted;
+  border-color: lightgrey;
+  padding: 1.5em;
+
+  .article-tag {
+    margin-bottom: 0;
+  }
+
+  h2 {
+    &.title {
+      margin: 0;
+      a {
+        font-size: 0.8em;
+        color: @bgcolor;
+        text-decoration: none;
+      }
+
+      .transition(all 0.3s);
+      a:hover {
+        color: @color5;
+      }
+    }
+  }
+}
+
+nav.navbar {
+  a.navbar-brand {
+    border: none;
+    color: @color2;
+		font-family: 'Ubuntu', sans-serif;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 18px 15px;
+    text-transform: uppercase;
+    &:hover {
+      border: none;
+      color: @color3;
+      text-decoration: none;
+    }
+
+    img.avatar-image {
+      display: inline-block;
+      height: 80px;
+      width:  80px;
+      margin-top: -24px;
+      margin-left: 1em;
+      margin-right: 1em;
+    }
+
+    .avatar-name {
+      display: inline-block;
+      vertical-align: top;
+    }
+  }
+}
+
+ul.nav.navbar-nav {
+  margin-top: 7px;
+}
+
+section#top {
+  padding-top: 4em;
+  padding-bottom: 0.1em;
+}
+
+span.published-date {
+  text-align: right;
+}
+

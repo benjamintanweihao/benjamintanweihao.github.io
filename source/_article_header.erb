@@ -1,0 +1,10 @@
+<div class="text-center">
+  <h1><%= current_article.title %></h1>
+  <div class="author">Benjamin Tan</div>
+  <time><%= pretty_date(current_article.date) %></time>
+  <ul class="article-tag list-inline">
+    <% current_article.tags.each do |tag| %>
+      <li><%= link_to tag, tag_path(tag) %></li>
+    <% end %>
+  </ul>
+</div>
