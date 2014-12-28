@@ -79,6 +79,7 @@ page "/feed.xml",   layout: false
 activate :directory_indexes
 activate :livereload
 activate :similar
+activate :syntax
 
 helpers do
   def pretty_date(date)
