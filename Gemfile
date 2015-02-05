@@ -7,7 +7,7 @@ gem "middleman-blog", "~> 3.5.3"
 gem "middleman-livereload", "~> 3.3.0"
 gem "middleman-syntax"
 gem "middleman-blog-similar"
-gem 'middleman-deploy', '~> 1.0'
+gem "middleman-deploy", "~> 1.0"
 gem "redcarpet"
 gem "therubyracer"
 gem "nokogiri"
