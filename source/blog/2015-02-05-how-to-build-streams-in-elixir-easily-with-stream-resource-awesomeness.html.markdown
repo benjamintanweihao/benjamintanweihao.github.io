@@ -54,7 +54,7 @@ wikipedia_titles = [...] # A list of a gazillion elements in it
 Then let's say we wanted to capitalize the Wikipedia titles. Therefore, we need to `map/2` the `String.upcase/1` function on `wikipedia_titles`:
 
 ```elixir
-wikipedia_titles |> Enum.map(&(String.upcase(&1))
+wikipedia_titles |> Enum.map(&(String.upcase(&1)))
 ``` 
 
 Finally, let's just assume that we are interested in the _first  10_ articles. `take/2` is just the function for that:
@@ -247,7 +247,7 @@ In this case, only four values were generated. Hopefully by now, the infinite nu
 
 In the next example, we going to generate a stream using _mouse coordinates_ as the data source. The full source code can be found on [GitHub](https://github.com/benjamintanweihao/click_stream).
 
-##### Setting Up the Project
+#### Setting Up the Project
 
 The first order of things is to set up a project with `mix`:
 
