@@ -1,0 +1,96 @@
+---
+title: 2014 Year in Review
+date: 2014-12-31 04:12 UTC
+tags: Writing, Speaking, Book, Elixir
+---
+
+Tis' the season for year-end reviews! Since I didn't do one last year, this is a good time as any to start. 2014 was the _best_ year I had so far, and probably also the busiest ever. Here's the 10 best things that happened in 2014:
+
+## #1: Got Married!
+
+![](http://i.imgur.com/vZyxEyE.jpg)
+
+My biggest achievement of 2014 has been to marry the love of my life. That's Hui Ling, my lovely wife. Now that the wedding preparations are behind us, I can finally get back to learning and doing awesome stuff.
+
+## #2. Elixir
+
+<img src="/images/coding/elixir.png" width="300px">
+
+[Elixir](http://www.elixir-lang.org) finally hit 1.0, and started gaining more attention. We had our very first [ElixirConf 2014](http://elixirconf.com/). I was pretty sad I couldn't make it for the first one, but I'm crossing my fingers and toes for my talk submission to get accepted [ElixirConf EU 2015](http://elixirconf.eu)! Slowly but surely, articles, talks and even books are springing up all over. There's no better time to be part of this awesome community.
+
+## #3. Writing for SitePoint
+
+<img src="/images/articles/sitepoint.png" width="300px"/>
+
+I wrote [6 articles](http://www.sitepoint.com/author/btan/) for SitePoint in 2014, 6 shy of my personal target. Writing for SitePoint gave me lots of practice in technical writing, and for that, I'm very grateful. I have since gained a renewed appreciation for the writers who can deliver well-written technical pieces.
+
+SitePoint is always on the [lookout for more authors](http://www.sitepoint.com/write-for-us/).
+
+## #4. Bought So Many Books
+
+With the money I earned from writing for SitePoint, I bought myself _lots of books_! As my wife can attest to, I have a pretty dismal buy-to-read ratio. Nonetheless, I'm pretty proud of my little library:
+
+![My Awesome Library](http://i.imgur.com/xz1h1xy.jpg)
+
+## #5. Speaking at Conferences
+
+I had the privilege of speaking at 2 Ruby conferences this year. [RedDot RubyConf 2014](http://www.reddotrubyconf.com/) was the first even conference talk I've given. Even more awesome was  when my [RubyConf 2014](http://rubyconf.org/) got accepted. The best part of it all was that I got to speak about Elixir at Ruby  conferences, and I think this goes a long way to demonstrate the Ruby communities' openness and willingness to explore new technologies.
+
+![](http://i.imgur.com/9X4jPuq.png)
+
+One of the best things to come out of the conferences were making new friends, especially getting to meet all the people I've only interacted from Twitter. Special shout out to [Jim Freeze](https://twitter.com/jimfreeze) who was a very welcoming figure at RubyConf. What made RubyConf 2014 extra special was the little Elixir gathering we had during lunches.
+
+You can catch the presentations I gave [here](http://confreaks.com/presenters/2702-benjamin-tan).
+
+## #6. New Job at Neo Innovation
+
+<img src="http://www.neo.com/images/logo-5fdc26a5.svg" width="300px"/>
+
+I joined [Neo Innovation](http://www.neo.com) in June 2014, and I couldn't be happier working with people that are _wayyy_ smarter than I am.
+
+We are [hiring](http://jobs.neo.com/)!
+
+## #7. Kept Blogging
+
+I am pretty proud that I continued to blog in 2014, and while my readership is pretty modest, it has grown significantly from when I first started. It also makes me very happy when people tweet/write to me and say that the posts have helped them in some way or another.
+
+## #8. The Little Elixir and OTP Guidebook
+
+![The Little Elixir and OTP Guidebook](/images/writing/exotpbook.png)
+
+This was a wild ride. One year ago, I wouldn't even dare dream to start on a book project, but I'm glad I did this year. I've made quite a few mistakes along the way, and at the same time, extremely humbled by the amount of support the community is willing to give. Getting the book deal with [Manning Co.](http://www.manning.com) was extremely exciting too. The entire process taught me a lot about pitching and marketing a book. 
+
+The book is far from done, mainly because now I have to get sign off from my editor, and also because of speaking, getting married, and honeymooning. On the bright side, I am starting to see vast improvements in the drafts.
+
+## #9. The Ruby Closures Book
+
+As if one book wasn't enough, I am starting on another book project. Writing is still in its early stages, but there's a [landing page](http://www.rubyclosur.es) for it.
+
+![The Ruby Closures Book](http://rubyclosur.es/images/ruby-closures-cover.png)
+
+Here's why I'm writing this book:
+
+> I have been a Ruby programmer for quite a number of years, but until recently, I have been blissfully ignorant of one of Ruby's most powerful features. That is, until one day, I saw a co-worker casually write a method that took in a block. Holy ****! I realized at that moment, I had a major gap in my Ruby knowledge.
+
+> Sure, I knew how to use blocks, and vaguely knew how to use lambdas in Rails scopes. But who was I kidding? I was never going to be a competent Ruby programmer if I didn't fix this.
+
+> Here's the thing. I spoke to a few of my Ruby programmer friends, and guess what, the situation is the same. If you are like that then this book is for you.
+
+> This book will help you gain a deep understanding of Ruby's closures, and more importantly, how to harness its power.
+
+Through writing this book, I'd be forcing myself to dive deep into the world of Ruby's blocks, `proc`s and `lambda`s, and be one step closer to a more competent Ruby developer.
+
+## 10. Blog and Landing Page Redesign
+
+I wanted to redesign my blog for the longest time. Unfortunately, due to my lack of CSS skills, this was on the back burner for a while. Since November, I resolved to work on my CSS, and as a form of personal motivation, I became my own client and decided to not only redesign my blog, but also do up a [landing page](http://benjamintan.io) for myself.
+
+![My landing page](http://i.imgur.com/OYJjbFU.png)
+
+This is the first website that I did for myself that I didn't hate. I also got sign off from my wife, so that's another plus.
+
+## Hello 2015!
+
+I couldn't be more excited for 2015. I'm looking forward to improving myself as a software developer, author and speaker. Thank you for supporting my work with your tweets, emails and comments. It meant a lot to me.
+
+Have an awesome 2015!
+
