@@ -213,7 +213,7 @@ Notice that the accumulator is always `file`. The only sane thing to do is pass 
 
 On the other hand, if the value you generate now depends on the previous value generated, then `accumulator` functions in the truest sense of the word. Here's the infinite number generator again:
 
-```elxir
+```elixir
 defmodule Streamy do
   
   def from(start) do
