@@ -387,6 +387,7 @@ Let's only display the first 10 x coordinates that are less than 100. When you r
 
 Because we placed an `IO.puts/1`, we can see all the `x` values that are being reported. Once 10 eligible values are created, the window is closed, and the return result is displayed:
 
+```elixir
 iex> stream |> Stream.filter(fn x -> x < 100 end) |> Enum.take 10
 x: 376
 x: 376
