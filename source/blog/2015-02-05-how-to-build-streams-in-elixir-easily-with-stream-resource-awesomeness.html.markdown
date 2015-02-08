@@ -4,7 +4,7 @@ date: 2015-02-05 06:32 UTC
 tags: Elixir, Streams
 ---
 
-Streams are fascinating because they allow us to model infinite data. In addition, a stream can be _composed_ together to form other stream. The possibilities are _endless_ – pun intended!
+Streams are fascinating because they allow us to model infinite data. In addition, a stream can be _composed_ together to form another stream. The possibilities are _endless_ – pun intended!
 
 I have covered streams in a [previous](/blog/2013/08/14/elixir-for-the-lazy-impatient-and-busy-part-5-streams-streaming-dynamo/) post many moons ago. But let's revisit the basics a bit, because why not?
 
