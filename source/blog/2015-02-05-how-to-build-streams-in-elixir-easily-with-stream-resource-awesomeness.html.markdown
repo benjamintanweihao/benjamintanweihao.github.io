@@ -145,7 +145,7 @@ fn -> start end
 
 See? Super simple.
 
-### Argument 3 – The After Function
+#### Argument 3 – The After Function
 
 Let's do the `after_function` before doing `next_function`. It is called "after" because this is the final function that is called once the stream is done spitting out values.
 
@@ -161,7 +161,7 @@ fn resource ->
 end
 ```
 
-### Argument 2 - The Next Function
+#### Argument 2 - The Next Function
 
 The `next_function` is where all the action is at. Conceptually, it is simple: This function:
 
@@ -190,7 +190,7 @@ fn resource ->
 end
 ```
 
-###### What is thes Accumulator?
+#### What is the Accumulator?
 
 Accumulator means different things given different situations. Here's the way I like to think about it:
 
