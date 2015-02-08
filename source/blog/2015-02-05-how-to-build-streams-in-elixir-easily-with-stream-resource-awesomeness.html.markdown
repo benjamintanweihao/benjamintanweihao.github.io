@@ -4,7 +4,7 @@ date: 2015-02-05 06:32 UTC
 tags: Elixir, Streams
 ---
 
-Streams are fascinating. They are fascinating because Streams allow us to model infinite data. In addition, a stream can be _composed_ together to form other stream. The possibilities are _endless_ – pun intended!
+Streams are fascinating because they allow us to model infinite data. In addition, a stream can be _composed_ together to form other stream. The possibilities are _endless_ – pun intended!
 
 I have covered streams in a [previous](/blog/2013/08/14/elixir-for-the-lazy-impatient-and-busy-part-5-streams-streaming-dynamo/) post many moons ago. But let's revisit the basics a bit, because why not?
 
@@ -83,7 +83,7 @@ When we replace `Enum.map/2` with `Stream.map/2`, both `String.upcase/2` and `St
 
 We are now going to learn how to create our own streams. We will go through two examples. The first example will be lame, but it will give you a feel of the general idea. The second is even more impractical, but will be very fun to play with.
 
-### Infinite Number Stream
+### An Infinite Number Stream
 
 Let's assume for a moment that we are blissfully unaware of functions that allow us to create infinite streams of numbers. Therefore, we are going to implement this functionality in a module called `Streamy`. 
 
