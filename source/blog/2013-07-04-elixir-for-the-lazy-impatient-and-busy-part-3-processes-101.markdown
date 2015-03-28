@@ -5,7 +5,7 @@ comments: true
 tags: ["Elixir", "Processes"]
 ---
 
-This is Part 3 of Elixir for the Lazy, Impatient and Busy - Processes __102__! If you haven't looked at [Part 1](blog/2013/06/13/elixir-for-the-lazy-impatient-and-busy-lists-and-recursion/) on Lists and Recursion and [Part 2](blog/2013/06/25/elixir-for-the-lazy-impatient-and-busy-part-2-processes-101/) Processes 101, I encourage you to check those out first.
+This is Part 3 of Elixir for the Lazy, Impatient and Busy - Processes __102__! If you haven't looked at [Part 1](/blog/2013/06/13/elixir-for-the-lazy-impatient-and-busy-lists-and-recursion/) on Lists and Recursion and [Part 2](/blog/2013/06/25/elixir-for-the-lazy-impatient-and-busy-part-2-processes-101/) Processes 101, I encourage you to check those out first.
 
 ##Quick Recap
 
