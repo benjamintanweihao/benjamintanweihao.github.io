@@ -94,7 +94,7 @@ I was totally freaking out and dancing around by then.
 
 Oh hell yes. 
 
-So far, the people at Manning have been super friendly. My only gripe is the constant back and forth, though I think most of it is unavoidable. This is in part that writing a book is tough, and also made tougher when we operate on different timezones. One nine day I will write about the entire Manning experience.
+So far, the people at Manning have been super friendly. My only gripe is the constant back and forth, though I think most of it is unavoidable. This is in part that writing a book is tough, and also made tougher when we operate on different timezones. One fine day I will write about the entire Manning experience.
 
 ## Ohai, The Little Elixir/OTP Guidebook!
 
