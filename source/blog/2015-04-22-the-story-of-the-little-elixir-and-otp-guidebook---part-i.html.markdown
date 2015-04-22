@@ -8,7 +8,7 @@ Unlike most of my posts, this one is going to be a retrospective of the writing 
 
 ## It started with stickers. 
 
-I am a sucker for stickers. One fine day, a certain [Dave Thomas](https://twitter.com/pragdave) was asking on Twitter who wanted Elixir stickers. Me, to being anyone who would ever miss up on something _free_, obviously wanted 1 _gajillion_ stickers. Didn't matter where I was going to stick them.
+I am a sucker for stickers. One fine day, a certain [Dave Thomas](https://twitter.com/pragdave) was asking on Twitter who wanted Elixir stickers. I am someone who would ever miss up on something _free_, obviously wanted a _gajillion_ stickers. Didn't matter where I was going to stick them.
 
 ![Stickers OMG!](http://i.imgur.com/0kIMYFX.png)
 
