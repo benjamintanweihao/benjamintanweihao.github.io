@@ -30,7 +30,7 @@ One fine day, I gave in. Since Elixir was fairly unknown then, I decided to crea
 
 You know how some developers have trouble starting a project if they didn't had a good name? I had the writer's equivalent. First, I had to decide on a cover. I headed over to the [Noun Project](http://thenounproject.com/) and picked me a nice logo. For the background, I went for [Subtle Patterns](http://subtlepatterns.com/). I designed everything in ... wait for it ... PowerPoint.
 
-Next, I had to figure out a good title. I knew it had to contain "Elixir" and "OTP". I started to research titles. I came across [A Little Riak Book](littleriakbook.com) and [Riak Handbook](Riak Handbook). A little bit here, a little bit there, and I settled on a title. Having "Little" was great too, because it explicitly told people _not_ to expect that much content.
+Next, I had to figure out a good title. I knew it had to contain "Elixir" and "OTP". I started to research titles. I came across [A Little Riak Book](www.littleriakbook.com) and [Riak Handbook](http://riakhandbook.com/). A little bit here, a little bit there, and I settled on a title. Having "Little" was great too, because it explicitly told people _not_ to expect that much content.
 
 Domain name came next. Here were some of the ones I came up with: 
 
