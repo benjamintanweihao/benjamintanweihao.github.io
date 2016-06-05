@@ -20,7 +20,7 @@ Before I begin, I'm going to assume the following:
 
 2) You know how to code.		
 
-3) You know how to look up [documentation](http://elixir-lang.org/docs/stable/) on your own and how to [install](http://elixir-lang.org/getting_started/1.html) Elixir.
+3) You know how to look up [documentation](http://elixir-lang.org/docs/stable/) on your own and how to [install](http://elixir-lang.org/getting_started/introduction.html) Elixir.
 
 There is probably going to be a lot of hand-waving, but I'm going to assume that you can probably infer from the context, and make parallels with whatever programming language you are comfortable with. 
 
