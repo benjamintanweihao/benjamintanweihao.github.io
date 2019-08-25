@@ -11,6 +11,8 @@ gem "middleman-deploy", "~> 1.0"
 gem "redcarpet"
 gem "therubyracer"
 gem "nokogiri"
+gem 'net-ssh', '~> 2.0'
+
 
 # For feed.xml.builder
 gem "builder", "~> 3.0"
