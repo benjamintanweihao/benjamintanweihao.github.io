@@ -1,0 +1,309 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Benjamin Tan Wei Hao">
+    <title>Benjamin Tan's Learnings & Writings - Ruby Block Patterns and How to Implement File.open</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/feed.xml" />
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/blog.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/solarized-dark.css" rel="stylesheet" type="text/css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="page-top" class="index">
+    <div class="top-bar"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped together for better mobile display -->
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <img class="img-circle avatar-image" src="/images/portrait.png" alt="Portrait" />
+            <span class="avatar-name">Benjamin Tan</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/blog" class="color1">Archive</a>
+            </li>
+            <li>
+              <a href="http://www.manning.com/tanweihao?a_aid=exotpbook&amp;a_bid=99f537ec" class="color2" target="_blank">My Elixir Book</a>
+            </li>
+            <li>
+              <a href="http://confreaks.com/presenters/2702-benjamin-tan" class="color3" target="_blank">Speaking</a>
+            </li>
+            <li>
+              <a href="https://github.com/benjamintanweihao" class="color4" target="_blank">Code</a>
+            </li>
+            <li>
+              <a href="/" class="color5" target="_blank">About</a>
+            </li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav>
+
+    <div class="wrapper">
+      <section id="top">
+          <div class="text-center">
+  <h1>Ruby Block Patterns and How to Implement File.open</h1>
+  <div class="author">Benjamin Tan</div>
+  <time>Mar 28, 2015</time>
+  <ul class="article-tag list-inline">
+      <li><a href="/blog/tags/ruby/">Ruby</a></li>
+      <li><a href="/blog/tags/closures/">Closures</a></li>
+      <li><a href="/blog/tags/book/">Book</a></li>
+  </ul>
+</div>
+ 
+      </section>
+
+      <div id="main" role="main">
+        <p><em>This is an excerpt from my latest book, <a href="https://leanpub.com/therubyclosuresbook">The Ruby Closures Book</a>. If you like it, consider <a href="https://leanpub.com/therubyclosuresbook">buying</a> it! &lt;3</em></p>
+
+<h2>Managing Resources with Blocks</h2>
+
+<p>Blocks are an excellent way to abstract pre and post processing. A wonderful example is how resource management is managed. Examples include opening and closing file handlers, socket connections, database connections etc.</p>
+
+<p>In other languages (C and Java, I&rsquo;m looking at you), remembering to open and close the resource is a largely manual affair. This is both painful and ugly:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">f</span> <span class="o">=</span> <span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s1">'Leo Tolstoy - War and Peace.txt'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+<span class="n">f</span> <span class="o">&lt;&lt;</span> <span class="s2">"Well, Prince, so Genoa and Lucca"</span> 
+<span class="n">f</span> <span class="o">&lt;&lt;</span> <span class="s2">" are now just family estates of the Buonapartes."</span>
+<span class="n">f</span><span class="p">.</span><span class="nf">close</span>
+</code></pre></div>
+<p>If you omit <code>f.close</code>, the file will remain open until the script terminates. In other words, you get a <em>resource leak</em>. If you have a long running application like a daemon or web application, then this is bad news. That&rsquo;s because the operating system can only handle a finite number of file handles. If you the long running daemon continuously opens files and doesn&rsquo;t close them, soon enough the file handles run out, and you&rsquo;ll get a 3 a.m. call. Happy times.</p>
+
+<p>If you think about it, what we really want is to <em>write</em> to the file. Having to remember to <em>close</em> the file handle is a hassle. </p>
+
+<p>Ruby has a very elegant way of doing this:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="no">File</span><span class="p">.</span><span class="nf">open</span><span class="p">(</span><span class="s1">'Leo Tolstoy - War and Peace.txt'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">f</span><span class="o">|</span>
+  <span class="n">f</span> <span class="o">&lt;&lt;</span> <span class="s2">"Well, Prince, so Genoa and Lucca"</span> 
+  <span class="n">f</span> <span class="o">&lt;&lt;</span> <span class="s2">" are now just family estates of the Buonapartes."</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>By passing in a block into <code>File.open</code>, Ruby helps you, the over-burdened (and downright lazy) developer, to close the file handle when you are done writing the program. Notice that the file handle is nicely scoped <em>within</em> the block.</p>
+
+<iframe width="160" height="400" src="https://leanpub.com/therubyclosuresbook/embed" frameborder="0" allowtransparency="true" style="float: right; margin-top: 40px; margin-left: 20px;"></iframe>
+
+<h2>Implementing File.open</h2>
+
+<p>How is this done? Let&rsquo;s learn to do this ourselves. First of all, the <a href="http://ruby-doc.org/core-2.1.4/File.html#method-c-new">Ruby documentation</a> provides and excellent overview of <code>File.open</code>: </p>
+
+<blockquote>
+<p>With no associated block, File.open is a synonym for ::new. If the optional code block is given, it will be passed the opened file as an argument and the File object will automatically be closed when the block terminates. The value of the block will be returned from File.open.</p>
+</blockquote>
+
+<p>This tells us <em>everything</em> we need to implement <code>File.open</code>:</p>
+
+<p>a) If there&rsquo;s no block given, <code>File.open</code> is the same as <code>File.new</code>:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">File</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">open</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+      <span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span> <span class="k">unless</span> <span class="nb">block_given?</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>b) If there&rsquo;s a block, the block is then passed the opened file as an argument &hellip;</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">File</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">open</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file</span> <span class="k">unless</span> <span class="nb">block_given?</span>
+    <span class="k">yield</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>c) &hellip; and the file is automatically closed when the block terminates</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">File</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">open</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file</span> <span class="k">unless</span> <span class="nb">block_given?</span>
+    <span class="k">yield</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+    <span class="n">file</span><span class="p">.</span><span class="nf">close</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>There&rsquo;s a subtlety to this. What happens if an exception is raised in the block? <code>file.close</code> will not be called! Thankfully, that&rsquo;s an easy fix with the <code>ensure</code> keyword:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">File</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">open</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file</span> <span class="k">unless</span> <span class="nb">block_given?</span>
+    <span class="k">yield</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+  <span class="k">ensure</span>
+    <span class="n">file</span><span class="p">.</span><span class="nf">close</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Now, <code>file.close</code> is <em>always</em> guaranteed to close properly.</p>
+
+<p>d) The value of the block will be returned from File.open.</p>
+
+<p>Since <code>yield(file)</code> is the last line, the value of the block will be returned from File.open.</p>
+
+<p><img alt="Gh5m6wm" src="http://i.imgur.com/Gh5M6wm.jpg" /></p>
+
+<p><em>In the <a href="https://leanpub.com/therubyclosuresbook">book</a>, I placed little exercises at the end of sections that let you test your understanding of the concepts that were just presented. Solutions are also included!</em></p>
+
+<h2>Exercises</h2>
+
+<ol>
+<li><p><em>Implement File.open</em>. Start off with the Ruby Documentation on <code>File.open</code>. The key here is to understand where to put pre and post processing code, where to put <code>yield</code>, and ensuring that resources are cleared up.</p></li>
+<li><p><em>Real-world Ruby code Ruby Redis Library</em>: Here is some code adapted from the <a href="https://github.com/redis/redis-rb/blob/7c4a95413009cefa0c74d8d320f1ae90a1c953c2/test/support/redis_mock.rb">Ruby Redis library</a>:</p></li>
+</ol>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">module</span> <span class="nn">Redis</span>
+  <span class="k">class</span> <span class="nc">Server</span>
+    <span class="c1"># ... more code ...</span>
+
+    <span class="k">def</span> <span class="nf">run</span>
+      <span class="kp">loop</span> <span class="k">do</span>
+        <span class="n">session</span> <span class="o">=</span> <span class="vi">@server</span><span class="p">.</span><span class="nf">accept</span>
+
+        <span class="k">begin</span>
+          <span class="k">return</span> <span class="k">if</span> <span class="k">yield</span><span class="p">(</span><span class="n">session</span><span class="p">)</span> <span class="o">==</span> <span class="ss">:exit</span>
+        <span class="k">ensure</span>
+          <span class="n">session</span><span class="p">.</span><span class="nf">close</span>
+        <span class="k">end</span>
+      <span class="k">end</span>
+    <span class="k">rescue</span> <span class="o">=&gt;</span> <span class="n">ex</span>
+      <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="s2">"Error running server: </span><span class="si">#{</span><span class="n">ex</span><span class="p">.</span><span class="nf">message</span><span class="si">}</span><span class="s2">"</span>
+      <span class="vg">$stderr</span><span class="p">.</span><span class="nf">puts</span> <span class="n">ex</span><span class="p">.</span><span class="nf">backtrace</span>
+    <span class="k">ensure</span>
+      <span class="vi">@server</span><span class="p">.</span><span class="nf">close</span>
+    <span class="k">end</span>
+
+    <span class="c1"># ... more code ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Notice the similarities to the <code>File.open</code> example. Does <code>run</code> require a block to be passed in? How is the return result of the block used? How could this code be called? </p>
+
+<h2>Solutions</h2>
+
+<ol>
+<li>Your final code should look something like this:</li>
+</ol>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">File</span>
+  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">open</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">block</span><span class="p">)</span>
+    <span class="n">file</span> <span class="o">=</span> <span class="n">new</span><span class="p">(</span><span class="nb">name</span><span class="p">,</span> <span class="n">mode</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">file</span> <span class="k">unless</span> <span class="nb">block_given?</span>
+    <span class="k">yield</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+  <span class="k">ensure</span>
+    <span class="n">file</span><span class="p">.</span><span class="nf">close</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<ol>
+<li>Let&rsquo;s go through the answers in order:</li>
+</ol>
+
+<p>a) Does <code>run</code> require a block to be passed in?</p>
+
+<p>Yes. There is no <code>block_given?</code>, and <code>yield</code> is called without any conditionals.</p>
+
+<p>b) How is the return result of the block used? </p>
+
+<p>The return result of the block is compared with <code>:exit</code>.</p>
+
+<p>c) How could this code be called? </p>
+
+<p>The key here is that the block passed has exactly one argument:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="no">Server</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">run</span> <span class="k">do</span> <span class="o">|</span><span class="n">session</span><span class="o">|</span>
+  <span class="c1"># do something with session</span>
+<span class="k">end</span>
+</code></pre></div>
+<h2>Thanks for Reading!</h2>
+
+<p>Hope you learned something! For more block patterns and other fun learnings, do check out the <a href="https://leanpub.com/therubyclosuresbook">book</a> that I put together.</p>
+
+      </div>
+      
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'benjamintanslearningswritings'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+      <div class="spacing"></div>
+    </div>
+
+      <footer>
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2>Let's Stay In Touch!</h2>
+          <p>Sign up to receive updates on my latest posts and books!</p>
+          <div class="spacing"></div>
+          <!-- Begin MailChimp Signup Form -->
+
+          <div id="mc_embed_signup" class="col-md-8 col-md-push-2">
+            <form action="//exotpbook.us3.list-manage.com/subscribe/post?u=e6c489d8ae654374bfa191d29&amp;id=a7b19f5882" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+            <div id="mc_embed_signup_scroll">      
+              
+              <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn">
+
+              <div class="mc-field-group form-group" style="overflow: hidden; padding-right: 1em;">
+                <input type="email" value="" name="EMAIL" class="required email form-control" id="mce-EMAIL" placeholder="Email Address">
+              </div>
+              <div id="mce-responses" class="clear">
+                <div class="response" id="mce-error-response" style="display:none"></div>
+                <div class="response" id="mce-success-response" style="display:none"></div>
+              </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+              <div style="position: absolute; left: -5000px;"><input type="text" name="b_e6c489d8ae654374bfa191d29_a7b19f5882" tabindex="-1" value=""></div>
+            </form>
+          </div>
+
+          <!--End mc_embed_signup-->
+          <div class="spacing"></div>
+      
+          <ul class="list-inline social-btns">
+            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
+            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
+            <li><a href="#top" class="page-scroll"><i class="fa fa-angle-double-up color3"></i></a></li>
+            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
+            <li><a href="http://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
+          </ul>
+          <small>Copyright by Benjamin Tan Wei Hao &copy;</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Rainbow Bar -->
+  <div class="bottom-bar"></div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" type="text/javascript"></script>
+<script src="/javascripts/modernizr.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+<script src="/javascripts/ga.js" type="text/javascript"></script>
+
+
+  </body>
+</html>

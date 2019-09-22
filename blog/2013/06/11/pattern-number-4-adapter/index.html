@@ -1,0 +1,254 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Benjamin Tan Wei Hao">
+    <title>Benjamin Tan's Learnings & Writings - Pattern #4: Adapter</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/feed.xml" />
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/blog.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/solarized-dark.css" rel="stylesheet" type="text/css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="page-top" class="index">
+    <div class="top-bar"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped together for better mobile display -->
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <img class="img-circle avatar-image" src="/images/portrait.png" alt="Portrait" />
+            <span class="avatar-name">Benjamin Tan</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/blog" class="color1">Archive</a>
+            </li>
+            <li>
+              <a href="http://www.manning.com/tanweihao?a_aid=exotpbook&amp;a_bid=99f537ec" class="color2" target="_blank">My Elixir Book</a>
+            </li>
+            <li>
+              <a href="http://confreaks.com/presenters/2702-benjamin-tan" class="color3" target="_blank">Speaking</a>
+            </li>
+            <li>
+              <a href="https://github.com/benjamintanweihao" class="color4" target="_blank">Code</a>
+            </li>
+            <li>
+              <a href="/" class="color5" target="_blank">About</a>
+            </li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav>
+
+    <div class="wrapper">
+      <section id="top">
+          <div class="text-center">
+  <h1>Pattern #4: Adapter</h1>
+  <div class="author">Benjamin Tan</div>
+  <time>Jun 11, 2013</time>
+  <ul class="article-tag list-inline">
+      <li><a href="/blog/tags/ruby/">Ruby</a></li>
+      <li><a href="/blog/tags/design-patterns/">Design Patterns</a></li>
+      <li><a href="/blog/tags/adapter/">Adapter</a></li>
+  </ul>
+</div>
+ 
+      </section>
+
+      <div id="main" role="main">
+        <p><img alt="Adapter" src="/images/adapter.jpg" /></p>
+
+<p>The <strong>Adapter</strong> pattern is one of those patterns that requires little imagination to figure out what they do. </p>
+
+<p>First off, let&rsquo;s see the definition courtesy of GoF:</p>
+
+<blockquote>
+<p>Convert the interface of a class into another interface clients expect.</p>
+
+<p>Adapter lets classes work together that couldn&rsquo;t otherwise because of incompatible interfaces.</p>
+</blockquote>
+
+<p>Let&rsquo;s see some code:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">Client</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">target</span><span class="p">)</span>
+    <span class="vi">@target</span> <span class="o">=</span> <span class="n">adapter</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">do_work</span>
+    <span class="c1"># do hard work …</span>
+    <span class="vi">@target</span><span class="p">.</span><span class="nf">complex_operation</span>
+    <span class="c1"># ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">Target</span>
+  <span class="k">def</span> <span class="nf">complex_operation</span>
+    <span class="c1"># la la la ...</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Here&rsquo;s the story:</p>
+
+<p>Normally the <code>Client</code> would be expecting that the <code>target</code> be able to <code>do_work</code> without a hitch:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">client</span> <span class="o">=</span> <span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Target</span><span class="p">.</span><span class="nf">new</span><span class="p">)</span>
+<span class="n">client</span><span class="p">.</span><span class="nf">do_work</span>
+</code></pre></div>
+<p>One fine day, your boss comes over, and shows you this class, and tells you that <code>SomeOtherTarget</code> must work with <code>Client</code>:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">SomeOtherTarget</span>
+  <span class="k">def</span> <span class="nf">trivial_operation</span>
+    <span class="c1"># oh no! different method name…</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Obviously, this won&rsquo;t work, because <code>SomeOtherTarget</code> does not have the <code>complex_operation</code> method that the <code>Client</code> expects:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">client</span> <span class="o">=</span> <span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">SomeOtherTarget</span><span class="p">.</span><span class="nf">new</span><span class="p">)</span>
+<span class="n">client</span><span class="p">.</span><span class="nf">do_work</span> <span class="c1"># DOES NOT WORK</span>
+</code></pre></div>
+<h2>Plugging in the Adapter</h2>
+
+<p>We need some way to bridge this difference in interfaces. How do we somehow connect <code>Client</code>&lsquo;s expectation of a <code>complex_operation</code> method with <code>SomeOtherTarget</code>&rsquo;s <code>trivial_operation</code> ?</p>
+
+<p>Here&rsquo;s the <code>Adapter</code> class to the rescue:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">Adapter</span> 
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">adaptee</span><span class="p">)</span>
+    <span class="vi">@adaptee</span> <span class="o">=</span> <span class="n">adaptee</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">complex_operation</span>
+    <span class="vi">@adaptee</span><span class="p">.</span><span class="nf">trivial_operation</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>And with this bit of indirection, <code>Client</code> can happily use <code>SomeOtherTarget</code>:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">client</span> <span class="o">=</span> <span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">Adapter</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">SomeOtherTarget</span><span class="p">.</span><span class="nf">new</span><span class="p">))</span>
+<span class="n">client</span><span class="p">.</span><span class="nf">do_work</span> <span class="c1"># DOES NOT WORK</span>
+</code></pre></div>
+<p>Notice how now the <code>Adapter</code> object takes the place of the <code>@target</code> instance variable of <code>Client</code>. The <code>Adapter</code> object now becomes the middleman/wrapper/translator. This is composition at work!</p>
+
+<h2>2 Flavors of Adapters: Object &amp; Class</h2>
+
+<p>Now, if you check out the <a href="http://en.wikipedia.org/wiki/Adapter_pattern">Wikipedia entry</a> you will see the 2 kinds of Adapters - <strong>Class</strong> and <strong>Object</strong> adapters.</p>
+
+<h3>Object Adapter</h3>
+
+<p><img alt="Object adapter" src="/images/object_adapter.png" />
+(Credits: Wikipedia)</p>
+
+<h3>Class Adapter</h3>
+
+<p><img alt="Class adapter" src="/images/class_adapter.png" />
+(Credits: Wikipedia)</p>
+
+<h3>So what&rsquo;s the difference?</h3>
+
+<p>I don&rsquo;t know about you, but when I first saw both UML diagrams, my eyes glazed. The key here to to focus on the differences.</p>
+
+<p>The <strong>Object Adapter</strong> uses <em>composition</em>. Notice that the <code>Adapter</code> has an <code>+adaptee</code> field. The <code>Adapter</code> class has to use the <code>Adaptee</code> class, and that&rsquo;s essentially <a href="http://en.wikipedia.org/wiki/Composition_over_inheritance"><em>composition</em></a>.</p>
+
+<p>The <strong>Class Adapter</strong> uses <em>multiple inheritance</em> (that&rsquo;s the hollow triangular arrows pointing upwards). Frankly, I don&rsquo;t know too much about multiple inheritance, and in general, unless you&rsquo;re a C++ programmer (I&rsquo;m sorry), you probably won&rsquo;t need this.</p>
+
+<p>Conclusion: Stick to the Object Adapter.</p>
+
+<p>In the next post, I will look at the <strong>Proxy</strong> pattern. Thanks for reading! </p>
+
+<h3>References</h3>
+
+<p>Olsen, R. (2008) Design patterns in Ruby. Upper Saddle River, NJ: Addison-Wesley, p.163-174.</p>
+
+      </div>
+      
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'benjamintanslearningswritings'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+      <div class="spacing"></div>
+    </div>
+
+      <footer>
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2>Let's Stay In Touch!</h2>
+          <p>Sign up to receive updates on my latest posts and books!</p>
+          <div class="spacing"></div>
+          <!-- Begin MailChimp Signup Form -->
+
+          <div id="mc_embed_signup" class="col-md-8 col-md-push-2">
+            <form action="//exotpbook.us3.list-manage.com/subscribe/post?u=e6c489d8ae654374bfa191d29&amp;id=a7b19f5882" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+            <div id="mc_embed_signup_scroll">      
+              
+              <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn">
+
+              <div class="mc-field-group form-group" style="overflow: hidden; padding-right: 1em;">
+                <input type="email" value="" name="EMAIL" class="required email form-control" id="mce-EMAIL" placeholder="Email Address">
+              </div>
+              <div id="mce-responses" class="clear">
+                <div class="response" id="mce-error-response" style="display:none"></div>
+                <div class="response" id="mce-success-response" style="display:none"></div>
+              </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+              <div style="position: absolute; left: -5000px;"><input type="text" name="b_e6c489d8ae654374bfa191d29_a7b19f5882" tabindex="-1" value=""></div>
+            </form>
+          </div>
+
+          <!--End mc_embed_signup-->
+          <div class="spacing"></div>
+      
+          <ul class="list-inline social-btns">
+            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
+            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
+            <li><a href="#top" class="page-scroll"><i class="fa fa-angle-double-up color3"></i></a></li>
+            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
+            <li><a href="http://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
+          </ul>
+          <small>Copyright by Benjamin Tan Wei Hao &copy;</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Rainbow Bar -->
+  <div class="bottom-bar"></div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" type="text/javascript"></script>
+<script src="/javascripts/modernizr.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+<script src="/javascripts/ga.js" type="text/javascript"></script>
+
+
+  </body>
+</html>

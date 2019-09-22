@@ -1,0 +1,264 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Benjamin Tan Wei Hao">
+    <title>Benjamin Tan's Learnings & Writings - Pattern #2: Strategy</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/feed.xml" />
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/blog.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/solarized-dark.css" rel="stylesheet" type="text/css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="page-top" class="index">
+    <div class="top-bar"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped together for better mobile display -->
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <img class="img-circle avatar-image" src="/images/portrait.png" alt="Portrait" />
+            <span class="avatar-name">Benjamin Tan</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/blog" class="color1">Archive</a>
+            </li>
+            <li>
+              <a href="http://www.manning.com/tanweihao?a_aid=exotpbook&amp;a_bid=99f537ec" class="color2" target="_blank">My Elixir Book</a>
+            </li>
+            <li>
+              <a href="http://confreaks.com/presenters/2702-benjamin-tan" class="color3" target="_blank">Speaking</a>
+            </li>
+            <li>
+              <a href="https://github.com/benjamintanweihao" class="color4" target="_blank">Code</a>
+            </li>
+            <li>
+              <a href="/" class="color5" target="_blank">About</a>
+            </li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav>
+
+    <div class="wrapper">
+      <section id="top">
+          <div class="text-center">
+  <h1>Pattern #2: Strategy</h1>
+  <div class="author">Benjamin Tan</div>
+  <time>Jun 02, 2013</time>
+  <ul class="article-tag list-inline">
+      <li><a href="/blog/tags/ruby/">Ruby</a></li>
+      <li><a href="/blog/tags/design-patterns/">Design Patterns</a></li>
+      <li><a href="/blog/tags/strategy/">Strategy</a></li>
+  </ul>
+</div>
+ 
+      </section>
+
+      <div id="main" role="main">
+        <p><img alt="Delegate" src="/images/delegate.png" />
+(Credits: http://www.indigoexcel.com/)</p>
+
+<p><strong>Strategy</strong> is a simple, yet powerful, design pattern to have in your toolbox. It&rsquo;s main power comes from its clever use of delegation. Here&rsquo;s the GoF definition:</p>
+
+<blockquote>
+<p>Define a family of algorithms, encapsulate each one, and make them interchangeable. 
+Strategy lets the algorithm vary independently from client that use it.</p>
+</blockquote>
+
+<p>Let&rsquo;s assume the following:</p>
+
+<p>You have just written an backup utility that is beloved by sysadmins all over the world.</p>
+
+<p>So far, your most requested feature is to support multiple forms of notifications. Currently, the user is only notified via standard output (i.e. Log file).</p>
+
+<p>You want to support multiple notifications, but yet, you are too <em>busy/lazy</em> to support the multitudes of notification methods (e.g.: Twitter/IRC/XMPP/etc).</p>
+
+<p>So how? Here&rsquo;s where <strong>Strategy</strong> comes to the rescue.</p>
+
+<p>In this example, there are 3 classes:</p>
+
+<ol>
+<li><p><code>Context</code>: Think of this as the client class. This is the class that is going to make use of the pattern. In the previous example, this could be the <code>BackupUtility</code> class.</p></li>
+<li><p><code>EmailNotifier</code>/<code>TwitterNotifier</code>: These classes represent the different notifiers we want to use.</p></li>
+</ol>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">class</span> <span class="nc">Context</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">notifier</span><span class="p">)</span>
+    <span class="vi">@notifier</span> <span class="o">=</span> <span class="n">notifier</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="vi">@notifier</span><span class="p">.</span><span class="nf">notify</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">EmailNotifier</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+    <span class="vi">@user_name</span>   <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="ss">:user_name</span><span class="p">]</span>
+    <span class="vi">@password</span>    <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="ss">:password</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="no">GoogleMailer</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">send</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>  
+  <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="k">class</span> <span class="nc">TwitterNotifier</span>
+  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">opts</span><span class="p">)</span>
+    <span class="vi">@handle</span> <span class="o">=</span> <span class="n">opts</span><span class="p">[</span><span class="ss">:handle</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="no">Twitter</span><span class="o">::</span><span class="no">Client</span><span class="p">.</span><span class="nf">new</span><span class="p">.</span><span class="nf">tweet</span><span class="p">(</span><span class="s2">"</span><span class="si">#{</span><span class="n">message</span><span class="si">}</span><span class="s2"> </span><span class="si">#{</span><span class="vi">@handle</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>So now, if we want to send notifications via email:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">context</span> <span class="o">=</span> <span class="no">Context</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="no">EmailNotifier</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">username: </span><span class="s1">'ben@gmail.com'</span><span class="p">,</span> <span class="ss">password: </span><span class="s1">'secretlol'</span><span class="p">))</span>
+<span class="n">context</span><span class="p">.</span><span class="nf">notify</span><span class="p">(</span><span class="s1">'Backup completed successfully!'</span><span class="p">)</span>
+</code></pre></div>
+<p>And if we want Twitter notifications instead:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="n">context</span><span class="p">.</span><span class="nf">notifier</span> <span class="o">=</span> <span class="no">TwitterNotifier</span><span class="p">.</span><span class="nf">new</span><span class="p">(</span><span class="ss">handle: </span><span class="s1">'@bentanweihao'</span><span class="p">)</span>
+<span class="n">context</span><span class="p">.</span><span class="nf">notify</span><span class="p">(</span><span class="s1">'Catastrophic disaster! Prepare for a long night.'</span><span class="p">)</span>
+</code></pre></div>
+<p>Now, the beautiful thing about the Strategy is that anyone can write custom notifications. </p>
+
+<p>All the implementation has to do is to implement the <code>notify</code> method, and then set the <code>notifier</code> attribute of the <code>Context</code> class to the new notifier.</p>
+
+<h2>Delegate, Delegate, Delegate</h2>
+
+<p>Delegation is at the heart of the strategy pattern. Most of its magic derives from the deceptively simple <code>notify</code> method in the <code>Context</code> class:</p>
+<div class="highlight"><pre class="highlight ruby"><code><span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+    <span class="vi">@notifier</span><span class="p">.</span><span class="nf">notify</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>The <code>Context</code> class doesn&rsquo;t care how the <code>notifier</code> is implemented. It just calls the <code>notify</code> method with the correct set of parameters.</p>
+
+<h2>Open/Close Principle</h2>
+
+<p><strong>Strategy</strong> is an example of the <a href="http://en.wikipedia.org/wiki/Open/closed_principle">Open/Closed principle</a>.</p>
+
+<p>The essence of it is:</p>
+
+<blockquote>
+<p>Software entities (classes, modules, functions, etc.) should be open for extension, but closed for modification.</p>
+</blockquote>
+
+<p>Imagine for a moment that our <code>Context</code> class is compiled and distributed only in binary form. No one else can modify the code except (closed of modification) yourself. How can you then allow others to create extensions to your code? </p>
+
+<p>If you have understood <strong>Strategy</strong>, this would be a non-issue since you just have to implement the correct interface, assign the correct attributes and you&rsquo;ll be all set.</p>
+
+<h2>Strategy vs. Template Method</h2>
+
+<ul>
+<li><p>Unlike <strong>Template method</strong>, <strong>Strategy</strong> doesn&rsquo;t require inheritance. </p></li>
+<li><p><strong>Template method</strong> modifies <em>part</em> of the algorithm, while <strong>Strategy</strong> swaps out the entire algorithm with a new one.</p></li>
+</ul>
+
+<p>In the next post, I&rsquo;ll cover an extremely useful and common pattern - <strong>Observer</strong>.</p>
+
+<p>Thanks for reading!</p>
+
+<h3>References</h3>
+
+<p>Olsen, R. (2008) Design patterns in Ruby. Upper Saddle River, NJ: Addison-Wesley, p.77-93.</p>
+
+<p>Gamma, E. (1995) Design patterns. Reading, Mass.: Addison-Wesley, p.315-323.</p>
+
+      </div>
+      
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'benjamintanslearningswritings'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+      <div class="spacing"></div>
+    </div>
+
+      <footer>
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2>Let's Stay In Touch!</h2>
+          <p>Sign up to receive updates on my latest posts and books!</p>
+          <div class="spacing"></div>
+          <!-- Begin MailChimp Signup Form -->
+
+          <div id="mc_embed_signup" class="col-md-8 col-md-push-2">
+            <form action="//exotpbook.us3.list-manage.com/subscribe/post?u=e6c489d8ae654374bfa191d29&amp;id=a7b19f5882" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+            <div id="mc_embed_signup_scroll">      
+              
+              <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn">
+
+              <div class="mc-field-group form-group" style="overflow: hidden; padding-right: 1em;">
+                <input type="email" value="" name="EMAIL" class="required email form-control" id="mce-EMAIL" placeholder="Email Address">
+              </div>
+              <div id="mce-responses" class="clear">
+                <div class="response" id="mce-error-response" style="display:none"></div>
+                <div class="response" id="mce-success-response" style="display:none"></div>
+              </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+              <div style="position: absolute; left: -5000px;"><input type="text" name="b_e6c489d8ae654374bfa191d29_a7b19f5882" tabindex="-1" value=""></div>
+            </form>
+          </div>
+
+          <!--End mc_embed_signup-->
+          <div class="spacing"></div>
+      
+          <ul class="list-inline social-btns">
+            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
+            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
+            <li><a href="#top" class="page-scroll"><i class="fa fa-angle-double-up color3"></i></a></li>
+            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
+            <li><a href="http://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
+          </ul>
+          <small>Copyright by Benjamin Tan Wei Hao &copy;</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Rainbow Bar -->
+  <div class="bottom-bar"></div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" type="text/javascript"></script>
+<script src="/javascripts/modernizr.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+<script src="/javascripts/ga.js" type="text/javascript"></script>
+
+
+  </body>
+</html>

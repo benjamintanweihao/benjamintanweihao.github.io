@@ -1,0 +1,470 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Benjamin Tan Wei Hao">
+    <title>Benjamin Tan's Learnings & Writings - Parsing the Wikipedia XML dump in Elixir using Erlsom (or, Big Data in Elixir)</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/feed.xml" />
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/blog.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/solarized-dark.css" rel="stylesheet" type="text/css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="page-top" class="index">
+    <div class="top-bar"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped together for better mobile display -->
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <img class="img-circle avatar-image" src="/images/portrait.png" alt="Portrait" />
+            <span class="avatar-name">Benjamin Tan</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/blog" class="color1">Archive</a>
+            </li>
+            <li>
+              <a href="http://www.manning.com/tanweihao?a_aid=exotpbook&amp;a_bid=99f537ec" class="color2" target="_blank">My Elixir Book</a>
+            </li>
+            <li>
+              <a href="http://confreaks.com/presenters/2702-benjamin-tan" class="color3" target="_blank">Speaking</a>
+            </li>
+            <li>
+              <a href="https://github.com/benjamintanweihao" class="color4" target="_blank">Code</a>
+            </li>
+            <li>
+              <a href="/" class="color5" target="_blank">About</a>
+            </li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav>
+
+    <div class="wrapper">
+      <section id="top">
+          <div class="text-center">
+  <h1>Parsing the Wikipedia XML dump in Elixir using Erlsom (or, Big Data in Elixir)</h1>
+  <div class="author">Benjamin Tan</div>
+  <time>Oct 01, 2014</time>
+  <ul class="article-tag list-inline">
+      <li><a href="/blog/tags/elixir/">Elixir</a></li>
+      <li><a href="/blog/tags/erlang/">Erlang</a></li>
+      <li><a href="/blog/tags/erlsom/">Erlsom</a></li>
+      <li><a href="/blog/tags/wikipedia/">Wikipedia</a></li>
+      <li><a href="/blog/tags/xml/">XML</a></li>
+  </ul>
+</div>
+ 
+      </section>
+
+      <div id="main" role="main">
+        <p>Seems like I&rsquo;m the last person to learn about SAX, which stands for (Simple API for XML). I wanted a nice example for my <a href="http://www.exotpbook.com">book</a>, and one of the things I wanted to do was to parse Wikipedia. Turns out, Wikipedia provides XML dumps, which comes in at a hefty 10GB, compressed. Uncompressed, the single XML file weighs in at 50GB. Look Ma, I&rsquo;m doing Big Data<sup>TM</sup>!</p>
+
+<h2>Why SAX?</h2>
+
+<p>It is practically impossible to load the entire XML file into memory. This means that parsers that work by loading the entire DOM is out of the question. SAX parsers, on the other hand, work by reading the XML file sequentially, and fires off events when say, it encounters the start/end of an element.</p>
+
+<h2>The State of XML Parsing in Erlang/Elixir</h2>
+
+<p>I think Erlangers do not do a lot of XML parsing, judging by the lack of (readable) documentation. The official Erlsom documentation is an exception though, and that is what we are going to use.</p>
+
+<h2>Getting SAXy with Wikipedia</h2>
+
+<p>We are going to learn how to parse a <strong>huge</strong> XML using Erlsom&rsquo;s SAX parser. If you are unfamiliar with SAX, you will get a slightly better idea by the end of this article. You will also gain a greater appreciation of how Elixir&rsquo;s pattern matching leads to a more declarative programming style – that is, expressing what you want, compared to <em>how</em> to do it.</p>
+
+<p>To follow along, you would need to download one of the Wikipedia dump from <a href="http://meta.wikimedia.org/wiki/Data_dump_torrents">here</a>.</p>
+
+<h3>Creating a Project</h3>
+
+<p>I&rsquo;m using Elixir v1.0.0, and so should you. Go ahead and create a project, and give it a kick-ass name:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>% mix new saxy
+* creating README.md
+* creating .gitignore
+* creating mix.exs
+* creating config
+* creating config/config.exs
+* creating lib
+* creating lib/saxy.ex
+* creating test
+* creating test/test_helper.exs
+* creating test/saxy_test.exs
+
+Your mix project was created successfully.
+You can use mix to compile it, test it, and more:
+
+    cd saxy
+    mix test
+
+Run `mix help` for more commands.
+</code></pre></div>
+<p>Next, we need to pull in the Erlsom library. Open up <code>mix.exs</code>, and add the necessary lines in <code>deps</code>:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Saxy</span><span class="o">.</span><span class="no">Mixfile</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Mix</span><span class="o">.</span><span class="no">Project</span>
+
+  <span class="k">def</span> <span class="n">project</span> <span class="k">do</span>
+    <span class="p">[</span><span class="ss">app:</span> <span class="ss">:saxy</span><span class="p">,</span>
+     <span class="ss">version:</span> <span class="s2">"0.0.1"</span><span class="p">,</span>
+     <span class="ss">elixir:</span> <span class="s2">"~&gt; 1.0.0-rc2"</span><span class="p">,</span>
+     <span class="ss">deps:</span> <span class="n">deps</span><span class="p">]</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">application</span> <span class="k">do</span>
+    <span class="p">[</span><span class="ss">applications:</span> <span class="p">[</span><span class="ss">:logger</span><span class="p">]]</span>
+  <span class="k">end</span>
+
+  <span class="k">defp</span> <span class="n">deps</span> <span class="k">do</span>
+    <span class="p">[</span>
+      <span class="p">{</span><span class="ss">:erlsom</span><span class="p">,</span> <span class="ss">git:</span> <span class="s2">"git@github.com:willemdj/erlsom.git"</span><span class="p">}</span> 
+    <span class="p">]</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Then, do a <code>mix deps.get</code> in the project directory to pull in all the necessary dependencies.</p>
+
+<h3>Parsing XML using Erlsom</h3>
+
+<p>On to the fun stuff. The meat of the application revolves around <code>:erlsom.parse_sax/4</code>:</p>
+<div class="highlight"><pre class="highlight erlang"><code><span class="nf">parse_sax</span><span class="p">(</span><span class="nv">XML</span><span class="p">,</span> <span class="nv">Acc0</span><span class="p">,</span> <span class="nv">EventFun</span><span class="p">,</span> <span class="nv">Options</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">AccOut</span><span class="p">,</span> <span class="nv">Rest</span><span class="p">}</span>
+
+<span class="nv">Xml</span>      <span class="o">=</span> <span class="p">[</span><span class="nf">int</span><span class="p">()],</span> <span class="n">a</span> <span class="n">list</span> <span class="k">of</span> <span class="nv">Unicode</span> <span class="n">code</span> <span class="n">points</span>
+<span class="nv">Acc0</span>     <span class="o">=</span> <span class="n">a</span> <span class="nf">term</span><span class="p">()</span> <span class="n">that</span> <span class="n">is</span> <span class="n">passed</span> <span class="n">to</span> <span class="n">the</span> <span class="nv">EventFun</span><span class="p">.</span>
+<span class="nv">Eventfun</span> <span class="o">=</span> <span class="n">a</span> <span class="k">fun</span><span class="p">()</span> <span class="n">that</span> <span class="n">is</span> <span class="n">called</span> <span class="n">by</span> <span class="n">the</span> <span class="n">parser</span> <span class="n">whenever</span> <span class="n">it</span> <span class="n">has</span> <span class="n">parsed</span> <span class="n">a</span> <span class="n">bit</span> <span class="k">of</span> <span class="n">the</span> <span class="nv">Xml</span> <span class="n">input</span> 
+<span class="nv">Options</span>  <span class="o">=</span> <span class="p">[</span><span class="nv">Option</span><span class="p">]</span>
+<span class="nv">Option</span>   <span class="o">=</span> <span class="p">{</span><span class="n">continuation_function</span><span class="p">,</span> <span class="nv">CState</span><span class="p">,</span> <span class="nv">CFunction</span><span class="p">}</span> 
+<span class="nv">AccOut</span>   <span class="o">=</span> <span class="n">a</span> <span class="n">the</span> <span class="n">result</span> <span class="k">of</span> <span class="n">the</span> <span class="n">last</span> <span class="n">invocation</span> <span class="k">of</span> <span class="nv">EventFun</span><span class="p">.</span> 
+<span class="nv">Rest</span>     <span class="o">=</span> <span class="n">list</span> <span class="k">of</span> <span class="n">characters</span> <span class="n">that</span> <span class="n">follow</span> <span class="k">after</span> <span class="n">the</span> <span class="k">end</span> <span class="k">of</span> <span class="n">the</span> <span class="nv">XML</span> <span class="n">document</span>
+</code></pre></div>
+<p>The above is directy copied from the <a href="https://github.com/willemdj/erlsom/blob/master/doc/reference.md#parse_sax">documentation</a>, which means that the above code is in Erlang.</p>
+
+<p>Here&rsquo;s our application in full (this is located in <code>lib/saxy.ex</code>). You can also take a moment to get a rough idea of how the <code>:erlsom.parse_sax/4</code> function is used.</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Saxy</span> <span class="k">do</span>
+  <span class="k">defmodule</span> <span class="no">SaxState</span> <span class="k">do</span>
+    <span class="k">defstruct</span> <span class="ss">title:</span> <span class="s2">""</span><span class="p">,</span> <span class="ss">text:</span> <span class="s2">""</span><span class="p">,</span> <span class="ss">element_acc:</span> <span class="s2">""</span>
+  <span class="k">end</span>
+
+  <span class="nv">@chunk</span> <span class="mi">10000</span> 
+
+  <span class="k">def</span> <span class="n">run</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">handle</span><span class="p">}</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[</span><span class="ss">:binary</span><span class="p">])</span>
+
+    <span class="n">position</span>           <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">c_state</span>            <span class="o">=</span> <span class="p">{</span><span class="n">handle</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="nv">@chunk</span><span class="p">}</span>
+
+    <span class="ss">:erlsom</span><span class="o">.</span><span class="n">parse_sax</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> 
+                      <span class="no">nil</span><span class="p">,</span> 
+                      <span class="o">&amp;</span><span class="n">sax_event_handler</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> 
+                      <span class="p">[{</span><span class="ss">:continuation_function</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">continue_file</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">c_state</span><span class="p">}])</span>
+
+    <span class="ss">:ok</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">continue_file</span><span class="p">(</span><span class="n">tail</span><span class="p">,</span> <span class="p">{</span><span class="n">handle</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">chunk</span><span class="p">})</span> <span class="k">do</span>
+    <span class="k">case</span> <span class="ss">:file</span><span class="o">.</span><span class="n">pread</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">data</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="o">&lt;&lt;</span><span class="n">tail</span> <span class="p">::</span> <span class="n">binary</span><span class="p">,</span> <span class="n">data</span><span class="p">::</span><span class="n">binary</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="p">{</span><span class="n">handle</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">chunk</span><span class="p">,</span> <span class="n">chunk</span><span class="p">}}</span>
+      <span class="ss">:oef</span> <span class="o">-&gt;</span>
+        <span class="p">{</span><span class="n">tail</span><span class="p">,</span> <span class="p">{</span><span class="n">handle</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">chunk</span><span class="p">}}</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:startElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">_state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%</span><span class="no">SaxState</span><span class="p">{}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:startElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">element_acc:</span> <span class="s2">""</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:characters</span><span class="p">,</span> <span class="n">value</span><span class="p">},</span> <span class="p">%</span><span class="no">SaxState</span><span class="p">{</span><span class="ss">element_acc:</span> <span class="n">element_acc</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">element_acc:</span> <span class="n">element_acc</span> <span class="o">&lt;&gt;</span> <span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:endElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">title:</span> <span class="n">state</span><span class="o">.</span><span class="n">element_acc</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:endElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">text:</span> <span class="n">state</span><span class="o">.</span><span class="n">element_acc</span><span class="p">}</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Title: </span><span class="si">#{</span><span class="n">state</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Text:  </span><span class="si">#{</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">state</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">(</span><span class="ss">:endDocument</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
+
+<span class="k">end</span>
+</code></pre></div>
+<h3>Taking it apart</h3>
+
+<p>Let&rsquo;s take the program apart. We start with <code>run/1</code>.</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">def</span> <span class="n">run</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="k">do</span>
+  <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">handle</span><span class="p">}</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">[</span><span class="ss">:binary</span><span class="p">])</span>
+
+  <span class="n">position</span>           <span class="o">=</span> <span class="mi">0</span>
+  <span class="n">c_state</span>            <span class="o">=</span> <span class="p">{</span><span class="n">handle</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="nv">@chunk</span><span class="p">}</span>
+
+  <span class="ss">:erlsom</span><span class="o">.</span><span class="n">parse_sax</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> 
+                    <span class="no">nil</span><span class="p">,</span> 
+                    <span class="o">&amp;</span><span class="n">sax_event_handler</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> 
+                    <span class="p">[{</span><span class="ss">:continuation_function</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">continue_file</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">c_state</span><span class="p">}])</span>
+
+  <span class="ss">:ok</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">handle</span><span class="p">)</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>We open the XML file in <code>:binary</code> mode. What is returned a tuple containing the <code>:ok</code> atom and a <em>file handle</em>. We are not reading the entire file here. You will see exactly how we do that later on.</p>
+
+<p>The first argument is an empty string, which is basically what you start off with. The second argument we will not use.</p>
+
+<h4>Continuation Function</h4>
+
+<p>Let&rsquo;s ignore the third argument for now, and concentrate on the last one:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="p">[{</span><span class="ss">:continuation_function</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">continue_file</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">c_state</span><span class="p">}]</span>
+</code></pre></div>
+<p>This tells <code>:erlsom.parse_sax/4</code> to use a <strong>continuation function</strong>. The continuation function is called each time when <code>:erl.parse_sax/4</code> needs more data. More data would be needed when <code>:erl.parse_sax/4</code> is done parsing the current chunk of file – that was provided by the  <em>previous</em> invocation of the continuation function.</p>
+
+<p>Notice how we refer to the <code>continue_file</code> function using the <code>&amp;</code> and <code>/arity</code> syntax. <code>c_state</code> is the tuple that we pass into <code>continue_file</code>. This tuple contains the XML file <code>handle</code>, the <code>position</code> of the file we are going to read from, and finally the <code>@chunk</code>, which is how much of the file we read each time.</p>
+
+<p>Let&rsquo;s take a look at the implementation of <code>continue_file</code>:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">def</span> <span class="n">continue_file</span><span class="p">(</span><span class="n">tail</span><span class="p">,</span> <span class="p">{</span><span class="n">handle</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">chunk</span><span class="p">})</span> <span class="k">do</span>
+  <span class="k">case</span> <span class="ss">:file</span><span class="o">.</span><span class="n">pread</span><span class="p">(</span><span class="n">handle</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">chunk</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">data</span><span class="p">}</span> <span class="o">-&gt;</span>
+      <span class="p">{</span><span class="o">&lt;&lt;</span><span class="n">tail</span> <span class="p">::</span> <span class="n">binary</span><span class="p">,</span> <span class="n">data</span><span class="p">::</span><span class="n">binary</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="p">{</span><span class="n">handle</span><span class="p">,</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">chunk</span><span class="p">,</span> <span class="n">chunk</span><span class="p">}}</span>
+    <span class="ss">:oef</span> <span class="o">-&gt;</span>
+      <span class="p">{</span><span class="n">tail</span><span class="p">,</span> <span class="p">{</span><span class="n">handle</span><span class="p">,</span> <span class="n">offset</span><span class="p">,</span> <span class="n">chunk</span><span class="p">}}</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>The second argument is <code>c_state</code>. This information is used in <code>:file.pread</code>, which allows us to read files in <code>chunks</code> given an <code>offset</code>. </p>
+
+<p>So what&rsquo;s <code>tail</code>? It is a list of characters that the SAX parser couldn&rsquo;t parse during the previous invocation, which could be due to an incomplete token, or some encoding issues. Either way, we will join back the <code>tail</code> with whatever current data we were reading from.</p>
+
+<p>Assuming we have more data (<code>:file.pread/3</code> returns <code>{:ok, data}</code>, then we return a tuple containing the updated data (the <code>tail</code> concatenated with the <code>data</code> read from file), and an updated <code>c_state</code>, whose offset value has incremented with the chunk size.</p>
+
+<p>If we hit the end of the file, <code>:eof</code> will be pattern matched and we return a tuple containing the <code>tail</code> and the unchanged <code>c_state</code>.</p>
+
+<p>It&rsquo;s worth taking a step back and review what we have just learnt. The <code>continuation_function</code> provides a way to read the file in chunks. It also handles incomplete data by combining the previous un-parseable data with the current chunk of data being read.</p>
+
+<p>Yay, we&rsquo;re done with the hard part.</p>
+
+<h4>SAX Events</h4>
+
+<p>Now, we can look into how we can parse the ginormous XML file.</p>
+
+<p>As a refresher, this is our favorite <code>:erl.parse_sax/4</code> again:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="ss">:erlsom</span><span class="o">.</span><span class="n">parse_sax</span><span class="p">(</span><span class="s2">""</span><span class="p">,</span> 
+                  <span class="no">nil</span><span class="p">,</span> 
+                  <span class="o">&amp;</span><span class="n">sax_event_handler</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> 
+                  <span class="p">[{</span><span class="ss">:continuation_function</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">continue_file</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">c_state</span><span class="p">}])</span>
+</code></pre></div>
+<p>The third argument defines the function to call when SAX events are triggered. An example of a SAX event is <code>startElement</code> and <code>endDocument</code>.</p>
+
+<p>Here are all the events:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Saxy</span> <span class="k">do</span>
+  <span class="k">defmodule</span> <span class="no">SaxState</span> <span class="k">do</span>
+    <span class="k">defstruct</span> <span class="ss">title:</span> <span class="s2">""</span><span class="p">,</span> <span class="ss">text:</span> <span class="s2">""</span><span class="p">,</span> <span class="ss">element_acc:</span> <span class="s2">""</span>
+  <span class="k">end</span>
+
+  <span class="c1"># Omitted stuff ...</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:startElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">_state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%</span><span class="no">SaxState</span><span class="p">{}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:startElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">element_acc:</span> <span class="s2">""</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:characters</span><span class="p">,</span> <span class="n">value</span><span class="p">},</span> <span class="p">%</span><span class="no">SaxState</span><span class="p">{</span><span class="ss">element_acc:</span> <span class="n">element_acc</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">element_acc:</span> <span class="n">element_acc</span> <span class="o">&lt;&gt;</span> <span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:endElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">title:</span> <span class="n">state</span><span class="o">.</span><span class="n">element_acc</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:endElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">text:</span> <span class="n">state</span><span class="o">.</span><span class="n">element_acc</span><span class="p">}</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Title: </span><span class="si">#{</span><span class="n">state</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span>
+    <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Text:  </span><span class="si">#{</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">state</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">(</span><span class="ss">:endDocument</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
+  <span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Notice how pattern matching comes into play here. We only need to say what kind of tags we are interested in. One look and you can tell only tags that are <code>&lt;title&gt;...&lt;/title&gt;</code> and <code>&lt;text&gt;...&lt;/text&gt;</code> are of interest to us.</p>
+
+<p>All of the <code>sax_event_handler</code>s return a <code>SaxState</code>, which is a <code>defstruct</code> with 3 pieces of information. Let&rsquo;s see how these information is populated. The structure of the Wikipedia XML is as such:</p>
+<div class="highlight"><pre class="highlight xml"><code><span class="nt">&lt;mediawiki</span> <span class="na">xml:lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;page&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Page title<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;revision&gt;</span>
+      <span class="nt">&lt;text&gt;</span>A bunch of [[text]] here.<span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/revision&gt;</span>
+    <span class="nt">&lt;revision&gt;</span>
+      <span class="nt">&lt;text&gt;</span>An earlier [[revision]].<span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/revision&gt;</span>
+  <span class="nt">&lt;/page&gt;</span>
+  <span class="nt">&lt;page&gt;</span>
+    <span class="nt">&lt;title&gt;</span>Talk:Page title<span class="nt">&lt;/title&gt;</span>
+    <span class="nt">&lt;revision&gt;</span>
+      <span class="nt">&lt;text&gt;</span>WHYD YOU LOCK PAGE??!!! i was editing that jerk<span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/revision&gt;</span>
+  <span class="nt">&lt;/page&gt;</span>
+<span class="nt">&lt;/mediawiki&gt;</span>
+</code></pre></div>
+<p>I have taken the liberty to remove tags that we don&rsquo;t care about.</p>
+
+<p>So let&rsquo;s imagine you are a parser, and you only care about <em>contents</em> <code>&lt;title&gt;...&lt;/title&gt;</code> and <code>&lt;text&gt;...&lt;/text&gt;</code>. Along the way, you hit into the first <code>&lt;title&gt;</code> opening tag. A SAX event is triggered, and only one matches:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:startElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">_state</span><span class="p">)</span> <span class="k">do</span>
+  <span class="p">%</span><span class="no">SaxState</span><span class="p">{}</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Here, we only have to initialize a brand new <code>SaxState</code>. After the initial title tag, everything that follows <em>before</em> the closing <code>&lt;/title&gt;</code> tag is well, the title. The event that is triggered is: </p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:characters</span><span class="p">,</span> <span class="n">value</span><span class="p">},</span> <span class="p">%</span><span class="no">SaxState</span><span class="p">{</span><span class="ss">element_acc:</span> <span class="n">element_acc</span><span class="p">}</span> <span class="o">=</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+  <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">element_acc:</span> <span class="n">element_acc</span> <span class="o">&lt;&gt;</span> <span class="n">to_string</span><span class="p">(</span><span class="n">value</span><span class="p">)}</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Here, we are <em>accumulating</em> all the data that is being triggered by this event and storing the contents into <code>element_acc</code> of the <code>SaxState</code>. Notice that we are not explicitly saying that this has to be inside a <code>&lt;title&gt;</code> or <code>&lt;text&gt;</code>, as this function is pretty generic.</p>
+
+<p>At a certain point, you would encounter the <em>closing</em> tag of <code>&lt;/title</code>&gt;. No surprise, another SAX event triggers:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:endElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'title'</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+  <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">title:</span> <span class="n">state</span><span class="o">.</span><span class="n">element_acc</span><span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Here, we return a <em>new</em> state containing all the <code>element_acc</code> that we have accumulated before, and set that as the title. In case you are unfamiliar with the funky syntax, that is just the way <code>defstruct</code> and Maps is updated. (Note, a <em>new</em> state is returned, since Elixir&rsquo;s data structures are immutable.)</p>
+
+<p>So that&rsquo;s that for <code>&lt;title&gt;...&lt;title&gt;</code>. Sooner or later, you encounter <code>&lt;text&gt;</code>. This time, return a new state, making sure that <code>element_acc</code> is an empty string. Again, this is needed because the <code>sax_event_handler</code> that handles the <code>{:characters, value}</code> event doesn&rsquo;t know which tag we are currently in, and will happily accumulate <code>element_acc</code> unless told otherwise.</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:startElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+  <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">element_acc:</span> <span class="s2">""</span><span class="p">}</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Finally, once we have hit the closing tag of <code>&lt;/text&gt;</code>, we do the same as before and store <code>element_acc</code>, but this time in <code>text</code>:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">({</span><span class="ss">:endElement</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="s1">'text'</span><span class="p">,</span> <span class="n">_</span><span class="p">},</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+  <span class="n">state</span> <span class="o">=</span> <span class="p">%{</span><span class="n">state</span> <span class="o">|</span> <span class="ss">text:</span> <span class="n">state</span><span class="o">.</span><span class="n">element_acc</span><span class="p">}</span>
+  <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Title: </span><span class="si">#{</span><span class="n">state</span><span class="o">.</span><span class="n">title</span><span class="si">}</span><span class="s2">"</span>
+  <span class="no">IO</span><span class="o">.</span><span class="n">puts</span> <span class="s2">"Text:  </span><span class="si">#{</span><span class="n">state</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span>
+  <span class="n">state</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>That&rsquo;s pretty much it! The remaining 2 event handlers are pretty self explanatory. The last one is just a &ldquo;catch-all&rdquo;:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">(</span><span class="ss">:endDocument</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
+<span class="k">def</span> <span class="n">sax_event_handler</span><span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">state</span><span class="p">),</span> <span class="k">do</span><span class="p">:</span> <span class="n">state</span>
+</code></pre></div>
+<h2>Running the project</h2>
+
+<p>To run it, from the project folder:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>% iex -S mix
+iex&gt; Saxy.run "path_to_wiki/wiki.xml"
+</code></pre></div>
+<p>You will see Wikipedia fly by, without getting any out of memory problems. </p>
+
+<h2>Parting Thoughts</h2>
+
+<p>Hopefully I&rsquo;ve made some positive contribution to the dearth of information out there. I plan to do more interesting things with Wikipedia, especially since I&rsquo;ve got this XML parsing thing figured out. I had a lot of fun putting this together, and if you are interested, the repository is at <a href="https://github.com/benjamintanweihao/saxy">GitHub</a>.</p>
+
+<p>Being able to use Erlang libraries directly from Elixir is so, so nice.</p>
+
+<p>Special thanks to <a href="https://github.com/jlouis">Jesper</a> for helping me figure some of this stuff out.</p>
+
+<p>Thanks for reading, you are awesome! &lt;3!</p>
+
+      </div>
+      
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'benjamintanslearningswritings'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+      <div class="spacing"></div>
+    </div>
+
+      <footer>
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2>Let's Stay In Touch!</h2>
+          <p>Sign up to receive updates on my latest posts and books!</p>
+          <div class="spacing"></div>
+          <!-- Begin MailChimp Signup Form -->
+
+          <div id="mc_embed_signup" class="col-md-8 col-md-push-2">
+            <form action="//exotpbook.us3.list-manage.com/subscribe/post?u=e6c489d8ae654374bfa191d29&amp;id=a7b19f5882" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+            <div id="mc_embed_signup_scroll">      
+              
+              <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn">
+
+              <div class="mc-field-group form-group" style="overflow: hidden; padding-right: 1em;">
+                <input type="email" value="" name="EMAIL" class="required email form-control" id="mce-EMAIL" placeholder="Email Address">
+              </div>
+              <div id="mce-responses" class="clear">
+                <div class="response" id="mce-error-response" style="display:none"></div>
+                <div class="response" id="mce-success-response" style="display:none"></div>
+              </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+              <div style="position: absolute; left: -5000px;"><input type="text" name="b_e6c489d8ae654374bfa191d29_a7b19f5882" tabindex="-1" value=""></div>
+            </form>
+          </div>
+
+          <!--End mc_embed_signup-->
+          <div class="spacing"></div>
+      
+          <ul class="list-inline social-btns">
+            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
+            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
+            <li><a href="#top" class="page-scroll"><i class="fa fa-angle-double-up color3"></i></a></li>
+            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
+            <li><a href="http://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
+          </ul>
+          <small>Copyright by Benjamin Tan Wei Hao &copy;</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Rainbow Bar -->
+  <div class="bottom-bar"></div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" type="text/javascript"></script>
+<script src="/javascripts/modernizr.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+<script src="/javascripts/ga.js" type="text/javascript"></script>
+
+
+  </body>
+</html>

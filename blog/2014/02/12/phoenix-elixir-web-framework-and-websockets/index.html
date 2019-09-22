@@ -1,0 +1,510 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Benjamin Tan Wei Hao">
+    <title>Benjamin Tan's Learnings & Writings - The Phoenix Web Framework for Elixir and Websockets</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/feed.xml" />
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/blog.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/solarized-dark.css" rel="stylesheet" type="text/css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="page-top" class="index">
+    <div class="top-bar"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped together for better mobile display -->
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <img class="img-circle avatar-image" src="/images/portrait.png" alt="Portrait" />
+            <span class="avatar-name">Benjamin Tan</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/blog" class="color1">Archive</a>
+            </li>
+            <li>
+              <a href="http://www.manning.com/tanweihao?a_aid=exotpbook&amp;a_bid=99f537ec" class="color2" target="_blank">My Elixir Book</a>
+            </li>
+            <li>
+              <a href="http://confreaks.com/presenters/2702-benjamin-tan" class="color3" target="_blank">Speaking</a>
+            </li>
+            <li>
+              <a href="https://github.com/benjamintanweihao" class="color4" target="_blank">Code</a>
+            </li>
+            <li>
+              <a href="/" class="color5" target="_blank">About</a>
+            </li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav>
+
+    <div class="wrapper">
+      <section id="top">
+          <div class="text-center">
+  <h1>The Phoenix Web Framework for Elixir and Websockets</h1>
+  <div class="author">Benjamin Tan</div>
+  <time>Feb 12, 2014</time>
+  <ul class="article-tag list-inline">
+      <li><a href="/blog/tags/elixir/">Elixir</a></li>
+      <li><a href="/blog/tags/phoenix/">Phoenix</a></li>
+      <li><a href="/blog/tags/websockets/">Websockets</a></li>
+  </ul>
+</div>
+ 
+      </section>
+
+      <div id="main" role="main">
+        <p>It has been a <em>really</em> long while since my last Elixir post. I have been doing a lot of research and learning for my upcoming <a href="http://www.exotpbook.com">book</a>.</p>
+
+<h3>Introducing Phoenix &amp; Websockets example application</h3>
+
+<p>We&rsquo;re going to learn how to create an application that uses websockets. This is how it looks like:</p>
+
+<p><img alt="Websockets Example Application" src="http://i.imgur.com/Fjt3Q7y.png" /></p>
+
+<p>This is taken off <a href="https://github.com/extend/cowboy/tree/master/examples/websocket/">Cowboy&rsquo;s Websocket Example</a>. This example application demonstrates <em>bi-directional</em> communication between the server (the phoenix application that you would be building later) and the client (your browser).</p>
+
+<p>The source for the application can be found on <a href="https://github.com/benjamintanweihao/so_much_websockets">github</a>.</p>
+
+<h3>Misadventures with Websockets</h3>
+
+<p><strong>Note:</strong> You can skip all the complaining and head to the next section, &ldquo;Enter the Phoenix&rdquo;. You would however miss the effort it took for me to get a workable websockets example.</p>
+
+<p>I needed websockets as part of the example application for the book. Unfortunately, I hit into several stumbling blocks. </p>
+
+<p>Here is a non-exhaustive list of the difficulties I ran into:</p>
+
+<h4>1. Dynamo</h4>
+
+<p>This was the first web framework I turned to, since I spent the most time with. There is a <a href="https://github.com/dynamo/dynamo/blob/master/examples/websocket.exs">websocket example</a> provided. </p>
+
+<p>Unfortunately, as I realized later, simply copying and pasting the code in a dynamo <em>project</em> (that is, one created with <code>mix dynamo my_project</code>) wasn&rsquo;t going to cut it. </p>
+
+<p>Some helpful folks on <code>#elixir-lang</code> pointed out that I had to add some other settings. However by then I was to fed up to try any further. It took me too long to realise that a single file Dynamo (the one reflected in the examples) worked differently from a Dynamo <em>project</em>.</p>
+
+<h4>2. Cowboy</h4>
+
+<p>This time, I tried to go <em>au naturel</em>, and tried using Cowboy. Playing with <code>:dispatch</code> was too much for me. Gave up after a couple of hours.</p>
+
+<h4>3. Online Resources</h4>
+
+<p>Either my google-fu took a vacation, or there was a serious lack of documentation, or even source code examples. This obviously should not come as a surprise, but I was really grumpy for not being able to find any <em>working</em> code.</p>
+
+<h3>Enter the Phoenix</h3>
+
+<p>Enough complaining. Let&rsquo;s make sure we&rsquo;re on the same Elixir version:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>% elixir -v                                                  
+Elixir 0.12.4-dev
+</code></pre></div>
+<h4>Installation</h4>
+
+<p>Head over to <a href="https://github.com/phoenixframework/phoenix">https://github.com/phoenixframework/phoenix</a> and install Phoenix.</p>
+
+<p>Or just copy paste:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>git clone https://github.com/phoenixframework/phoenix.git
+cd phoenix
+mix do deps.get, compile
+</code></pre></div>
+<p>Now that you are in the <code>phoenix</code> directory, go ahead and create the example application:</p>
+
+<p><strong>Note:</strong> Create the application <em>outside</em> the <code>phoenix</code> directory.</p>
+
+<p>I&rsquo;ll just create an app on my <code>~/Desktop</code>:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>% mix phoenix.new  so_much_websockets ~/Desktop
+</code></pre></div>
+<p>Navigate to the <code>so_much_sockets</code> directory:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>% cd ~/Desktop/so_much_sockets
+</code></pre></div>
+<p>Fetch the required dependencies:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>% mix deps.get
+</code></pre></div>
+<h4>Folder Structure</h4>
+
+<p>Whenever I play around with web frameworks, I like to see the folder structure, just to get a feel:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>% tree                                                                               
+.
+├── README.md
+├── lib
+│   ├── so_much_websockets
+│   │   ├── controllers
+│   │   │   └── pages.ex
+│   │   ├── router.ex
+│   │   └── supervisor.ex
+│   └── so_much_websockets.ex
+├── mix.exs
+└── test
+    ├── so_much_websockets_test.exs
+    └── test_helper.exs
+
+4 directories, 8 files
+</code></pre></div>
+<p>At this point of writing, Phoenix has some slight incompatiblities with one of the dependencies. </p>
+
+<p>Open up <code>mix.exs</code> and have <code>deps/0</code> look like this:</p>
+<div class="highlight"><pre class="highlight elixir"><code> <span class="k">defp</span> <span class="n">deps</span> <span class="k">do</span>
+   <span class="p">[</span>
+     <span class="p">{</span> <span class="ss">:phoenix</span><span class="p">,</span> <span class="ss">github:</span> <span class="s2">"chrismccord/phoenix"</span> <span class="p">},</span>
+     <span class="p">{</span> <span class="ss">:plug</span><span class="p">,</span> <span class="ss">git:</span> <span class="s2">"https://github.com/elixir-lang/plug.git"</span><span class="p">,</span> <span class="ss">tag:</span> <span class="s2">"v0.2.0"</span><span class="p">,</span> <span class="ss">override:</span> <span class="no">true</span> <span class="p">},</span>
+   <span class="p">]</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>After that, run <code>mix deps.get</code> again.</p>
+
+<h3>Hello, Phoenix!</h3>
+
+<p>Let&rsquo;s run our app:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>% iex -S mix 
+iex(1)&gt; SoMuchWebsockets.Router.start
+Running Elixir.SoMuchWebsockets.Router with Cowboy with [port: 4000]
+</code></pre></div>
+<p>Then navigate to <a href="http://localhost:4000">http://localhost:4000</a> to see the universal programmer greeting.</p>
+
+<p>Give yourself a pat on the back.</p>
+
+<h3>Where did our response come from?</h3>
+
+<h4>1. <code>router.ex</code></h4>
+
+<p>Examine the router:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">SoMuchWebsockets</span><span class="o">.</span><span class="no">Router</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Router</span><span class="p">,</span> <span class="ss">port:</span> <span class="mi">4000</span>
+
+  <span class="n">get</span> <span class="s2">"/"</span><span class="p">,</span> <span class="no">SoMuchWebsockets</span><span class="o">.</span><span class="no">Controllers</span><span class="o">.</span><span class="no">Pages</span><span class="p">,</span> <span class="ss">:index</span><span class="p">,</span> <span class="ss">as:</span> <span class="ss">:page</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Should be self explantory. Not let&rsquo;s follow the trail and look at what&rsquo;s in 
+<code>SoMuchWebsockets.Controllers.Pages</code>.</p>
+
+<h4>2. <code>SoMuchWebsockets.Controllers.Pages</code></h4>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">SoMuchWebsockets</span><span class="o">.</span><span class="no">Controllers</span><span class="o">.</span><span class="no">Pages</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Controller</span>
+
+  <span class="k">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">text</span> <span class="n">conn</span><span class="p">,</span> <span class="s2">"Hello world"</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Bingo! Let&rsquo;s replace <code>Hello world</code> with some html content. Because I&rsquo;m extremely lazy, let&rsquo;s just do this:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">SoMuchWebsockets</span><span class="o">.</span><span class="no">Controllers</span><span class="o">.</span><span class="no">Pages</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Controller</span>
+
+  <span class="k">def</span> <span class="n">index</span><span class="p">(</span><span class="n">conn</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">html</span> <span class="n">conn</span><span class="p">,</span> <span class="sd">"""
+    &lt;html&gt;
+      &lt;head&gt;
+        &lt;meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1"&gt;
+        &lt;title&gt;Websocket client&lt;/title&gt;
+        &lt;script src="/javascript/jquery.min.js"&gt;&lt;/script&gt;
+        &lt;script type="text/javascript"&gt;
+
+          var websocket;
+          $(document).ready(init);
+
+          function init() {
+              if(!("WebSocket" in window)){  
+                  $('#status').append('&lt;p&gt;&lt;span style="color: red;"&gt;websockets are not supported &lt;/span&gt;&lt;/p&gt;');
+                  $("#navigation").hide();  
+              } else {
+                  $('#status').append('&lt;p&gt;&lt;span style="color: green;"&gt;websockets are supported &lt;/span&gt;&lt;/p&gt;');
+                  connect();
+              };
+                  $("#connected").hide();   
+                  $("#content").hide();   
+          };
+
+          function connect()
+          {
+              wsHost = $("#server").val()
+              websocket = new WebSocket(wsHost);
+              showScreen('&lt;b&gt;Connecting to: ' +  wsHost + '&lt;/b&gt;'); 
+              websocket.onopen = function(evt) { onOpen(evt) }; 
+              websocket.onclose = function(evt) { onClose(evt) }; 
+              websocket.onmessage = function(evt) { onMessage(evt) }; 
+              websocket.onerror = function(evt) { onError(evt) }; 
+          };  
+
+          function disconnect() {
+              websocket.close();
+          }; 
+
+          function toggle_connection(){
+              if(websocket.readyState == websocket.OPEN){
+                  disconnect();
+              } else {
+                  connect();
+              };
+          };
+
+          function sendTxt() {
+              if(websocket.readyState == websocket.OPEN){
+                  txt = $("#send_txt").val();
+                  websocket.send(txt);
+                  showScreen('sending: ' + txt); 
+              } else {
+                  showScreen('websocket is not connected'); 
+              };
+          };
+
+          function onOpen(evt) { 
+              showScreen('&lt;span style="color: green;"&gt;CONNECTED &lt;/span&gt;'); 
+              $("#connected").fadeIn('slow');
+              $("#content").fadeIn('slow');
+          };  
+
+          function onClose(evt) { 
+              showScreen('&lt;span style="color: red;"&gt;DISCONNECTED &lt;/span&gt;');
+          };  
+
+          function onMessage(evt) { 
+              showScreen('&lt;span style="color: blue;"&gt;RESPONSE: ' + evt.data+ '&lt;/span&gt;'); 
+          };  
+
+          function onError(evt) {
+              showScreen('&lt;span style="color: red;"&gt;ERROR: ' + evt.data+ '&lt;/span&gt;');
+          };
+
+          function showScreen(txt) { 
+              $('#output').prepend('&lt;p&gt;' + txt + '&lt;/p&gt;');
+          };
+
+          function clearScreen() 
+          { 
+              $('#output').html("");
+          };
+        &lt;/script&gt;
+      &lt;/head&gt;
+
+      &lt;body&gt;
+        &lt;div id="header"&gt;
+          &lt;h1&gt;Websocket client&lt;/h1&gt;
+          &lt;div id="status"&gt;&lt;/div&gt;
+        &lt;/div&gt;
+
+
+        &lt;div id="navigation"&gt;
+
+          &lt;p id="connecting"&gt;
+      &lt;input type='text' id="server" value="ws://localhost:4000/ws"&gt;&lt;/input&gt;
+      &lt;button type="button" onclick="toggle_connection()"&gt;connection&lt;/button&gt;
+          &lt;/p&gt;
+          &lt;div id="connected"&gt;        
+      &lt;p&gt;
+        &lt;input type='text' id="send_txt" value=&gt;&lt;/input&gt;
+        &lt;button type="button" onclick="sendTxt();"&gt;send&lt;/button&gt;
+      &lt;/p&gt;
+          &lt;/div&gt;
+
+          &lt;div id="content"&gt;            
+      &lt;button id="clear" onclick="clearScreen()" &gt;Clear text&lt;/button&gt;
+      &lt;div id="output"&gt;&lt;/div&gt;
+          &lt;/div&gt;
+
+        &lt;/div&gt;
+      &lt;/body&gt;
+    &lt;/html&gt; 
+    """</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>You need to then exit the console, and run <code>SoMuchWebsockets.Router.start</code> again. (I&rsquo;m pretty sure there&rsquo;s a much better way to do this, but bear with me first.) When you refresh, you should see something similar to the screenshot at the very beginning of this post.</p>
+
+<p>Obviously, this will not work yet, because we have yet to implement the main meat of our application - The Websocket Handler.</p>
+
+<h3>Implementing the Websocket Handler</h3>
+
+<h4>1. Create <code>websocket_handler</code> in <code>lib/so_much_websockets</code>:</h4>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">SoMuchWebsockets</span><span class="o">.</span><span class="no">WebSocketHandler</span> <span class="k">do</span>
+  <span class="nv">@behaviour</span> <span class="ss">:cowboy_websocket_handler</span>
+
+  <span class="k">def</span> <span class="n">init</span><span class="p">({</span><span class="ss">:tcp</span><span class="p">,</span> <span class="ss">:http</span><span class="p">},</span> <span class="n">_req</span><span class="p">,</span> <span class="n">_opts</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:upgrade</span><span class="p">,</span> <span class="ss">:protocol</span><span class="p">,</span> <span class="ss">:cowboy_websocket</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">websocket_init</span><span class="p">(</span><span class="n">_transport_name</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">_opts</span><span class="p">)</span> <span class="k">do</span>
+    <span class="ss">:erlang</span><span class="o">.</span><span class="n">start_timer</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">self</span><span class="p">,</span> <span class="s2">"Hello!"</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="ss">:undefined_state</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">websocket_handle</span><span class="p">({</span><span class="ss">:text</span><span class="p">,</span> <span class="n">msg</span><span class="p">},</span> <span class="n">req</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:reply</span><span class="p">,</span> <span class="p">{</span><span class="ss">:text</span><span class="p">,</span> <span class="s2">"That's what she said! </span><span class="si">#{</span><span class="n">msg</span><span class="si">}</span><span class="s2">"</span><span class="p">},</span> <span class="n">req</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">websocket_info</span><span class="p">({</span><span class="ss">:timeout</span><span class="p">,</span> <span class="n">_ref</span><span class="p">,</span> <span class="n">msg</span><span class="p">},</span> <span class="n">req</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="ss">:erlang</span><span class="o">.</span><span class="n">start_timer</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">self</span><span class="p">,</span> <span class="s2">"How' you doin'?"</span><span class="p">)</span>
+    <span class="p">{</span><span class="ss">:reply</span><span class="p">,</span> <span class="p">{</span><span class="ss">:text</span><span class="p">,</span> <span class="n">msg</span><span class="p">},</span> <span class="n">req</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">websocket_info</span><span class="p">(</span><span class="n">_info</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">req</span><span class="p">,</span> <span class="n">state</span><span class="p">}</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">websocket_terminate</span><span class="p">(</span><span class="n">_reason</span><span class="p">,</span> <span class="n">_req</span><span class="p">,</span> <span class="n">_state</span><span class="p">)</span> <span class="k">do</span>
+    <span class="ss">:ok</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>I&rsquo;ll leave you to find out what <code>websocket_handle</code> and <code>websocket_info</code> do.</p>
+
+<p><strong>TL;DR</strong>: The former handles messages <em>from the browser</em>, and the latter handles messages <em>to the server</em>.</p>
+
+<p>You can experiment with this once the application is completed.</p>
+
+<h4>2. Add routes to handle the websockets</h4>
+
+<p>Open <code>router.ex</code> and make it look like this:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">SoMuchWebsockets</span><span class="o">.</span><span class="no">Router</span> <span class="k">do</span>
+  <span class="kn">use</span> <span class="no">Phoenix</span><span class="o">.</span><span class="no">Router</span><span class="p">,</span> 
+    <span class="ss">port:</span> <span class="mi">4000</span><span class="p">,</span>
+    <span class="ss">dispatch:</span> <span class="p">[</span>
+      <span class="p">{</span> <span class="ss">:_</span><span class="p">,</span> <span class="p">[</span>
+          <span class="p">{</span><span class="s2">"/stylesheets/[...]"</span><span class="p">,</span> <span class="ss">:cowboy_static</span><span class="p">,</span> <span class="p">{</span><span class="ss">:dir</span><span class="p">,</span> <span class="s2">"priv/static/stylesheets"</span><span class="p">}},</span>
+          <span class="p">{</span><span class="s2">"/javascript/[...]"</span><span class="p">,</span> <span class="ss">:cowboy_static</span><span class="p">,</span> <span class="p">{</span><span class="ss">:dir</span><span class="p">,</span> <span class="s2">"priv/static/javascript"</span><span class="p">}},</span>
+          <span class="p">{</span><span class="s2">"/ws"</span><span class="p">,</span> <span class="no">SoMuchWebsockets</span><span class="o">.</span><span class="no">WebSocketHandler</span><span class="p">,</span> <span class="p">[]</span> <span class="p">},</span>
+          <span class="p">{</span><span class="ss">:_</span><span class="p">,</span> <span class="no">Plug</span><span class="o">.</span><span class="no">Adapters</span><span class="o">.</span><span class="no">Cowboy</span><span class="o">.</span><span class="no">Handler</span><span class="p">,</span> <span class="p">{</span> <span class="bp">__MODULE__</span><span class="p">,</span> <span class="p">[]</span> <span class="p">}}</span>
+      <span class="p">]}</span>
+    <span class="p">]</span>
+
+  <span class="n">get</span> <span class="s2">"/"</span><span class="p">,</span> <span class="no">SoMuchWebsockets</span><span class="o">.</span><span class="no">Controllers</span><span class="o">.</span><span class="no">Pages</span><span class="p">,</span> <span class="ss">:index</span><span class="p">,</span> <span class="ss">as:</span> <span class="ss">:page</span>
+<span class="k">end</span>
+</code></pre></div>
+<h4>3. Add jQuery</h4>
+
+<p>First, create a <code>priv</code> directory, and create a <code>static</code> folder. Now in that <code>static</code> folder, create 2 more directories: <code>javascript</code> and <code>stylesheets</code>. </p>
+
+<p>In the <code>javascript</code> folder, download <code>jquery.min.js</code>. You can get a copy from <a href="https://raw2.github.com/extend/cowboy/master/examples/websocket/priv/static/jquery.min.js">here</a>.</p>
+
+<p>This is how your directory structure should look like:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>├── lib
+│   ├── so_much_websockets
+│   │   ├── controllers
+│   │   │   └── pages.ex
+│   │   ├── router.ex
+│   │   ├── supervisor.ex
+│   │   └── websocket_handler.ex
+│   └── so_much_websockets.ex
+├── mix.exs
+├── mix.lock
+├── priv
+│   └── static
+│       ├── javascript
+│       │   └── jquery.min.js
+│       └── stylesheets
+└── test
+    ├── so_much_websockets_test.exs
+    └── test_helper.exs
+</code></pre></div>
+<h3>Paydirt!</h3>
+
+<p>Go to the console, and restart the router again, and refresh your browser. You should <em>finally</em> see some text scrolling by.</p>
+
+<p>Give yourself another pat in the back. You totally deserve this.</p>
+
+<h3>I&rsquo;m just not that smart</h3>
+
+<p>Please do not take what I said above as slamming Dynamo or Cowboy. Far from it. </p>
+
+<p>The point is I wasn&rsquo;t too smart in figuring out how to get websockets working on both Dynamo / Cowboy, and just <em>somehow</em> managed to get it working on Phoenix after some tinkering and help from its creators.</p>
+
+<p>Hopefully, this helps some poor soul struggling with Websockets. </p>
+
+<p>I feel you.</p>
+
+      </div>
+      
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'benjamintanslearningswritings'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+      <div class="spacing"></div>
+    </div>
+
+      <footer>
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2>Let's Stay In Touch!</h2>
+          <p>Sign up to receive updates on my latest posts and books!</p>
+          <div class="spacing"></div>
+          <!-- Begin MailChimp Signup Form -->
+
+          <div id="mc_embed_signup" class="col-md-8 col-md-push-2">
+            <form action="//exotpbook.us3.list-manage.com/subscribe/post?u=e6c489d8ae654374bfa191d29&amp;id=a7b19f5882" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+            <div id="mc_embed_signup_scroll">      
+              
+              <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn">
+
+              <div class="mc-field-group form-group" style="overflow: hidden; padding-right: 1em;">
+                <input type="email" value="" name="EMAIL" class="required email form-control" id="mce-EMAIL" placeholder="Email Address">
+              </div>
+              <div id="mce-responses" class="clear">
+                <div class="response" id="mce-error-response" style="display:none"></div>
+                <div class="response" id="mce-success-response" style="display:none"></div>
+              </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+              <div style="position: absolute; left: -5000px;"><input type="text" name="b_e6c489d8ae654374bfa191d29_a7b19f5882" tabindex="-1" value=""></div>
+            </form>
+          </div>
+
+          <!--End mc_embed_signup-->
+          <div class="spacing"></div>
+      
+          <ul class="list-inline social-btns">
+            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
+            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
+            <li><a href="#top" class="page-scroll"><i class="fa fa-angle-double-up color3"></i></a></li>
+            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
+            <li><a href="http://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
+          </ul>
+          <small>Copyright by Benjamin Tan Wei Hao &copy;</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Rainbow Bar -->
+  <div class="bottom-bar"></div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" type="text/javascript"></script>
+<script src="/javascripts/modernizr.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+<script src="/javascripts/ga.js" type="text/javascript"></script>
+
+
+  </body>
+</html>

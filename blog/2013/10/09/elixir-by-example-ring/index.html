@@ -1,0 +1,306 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Benjamin Tan Wei Hao">
+    <title>Benjamin Tan's Learnings & Writings - Elixir by Example: The Ring I</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/feed.xml" />
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/blog.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/solarized-dark.css" rel="stylesheet" type="text/css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="page-top" class="index">
+    <div class="top-bar"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped together for better mobile display -->
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <img class="img-circle avatar-image" src="/images/portrait.png" alt="Portrait" />
+            <span class="avatar-name">Benjamin Tan</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/blog" class="color1">Archive</a>
+            </li>
+            <li>
+              <a href="http://www.manning.com/tanweihao?a_aid=exotpbook&amp;a_bid=99f537ec" class="color2" target="_blank">My Elixir Book</a>
+            </li>
+            <li>
+              <a href="http://confreaks.com/presenters/2702-benjamin-tan" class="color3" target="_blank">Speaking</a>
+            </li>
+            <li>
+              <a href="https://github.com/benjamintanweihao" class="color4" target="_blank">Code</a>
+            </li>
+            <li>
+              <a href="/" class="color5" target="_blank">About</a>
+            </li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav>
+
+    <div class="wrapper">
+      <section id="top">
+          <div class="text-center">
+  <h1>Elixir by Example: The Ring I</h1>
+  <div class="author">Benjamin Tan</div>
+  <time>Oct 09, 2013</time>
+  <ul class="article-tag list-inline">
+      <li><a href="/blog/tags/elixir/">Elixir</a></li>
+      <li><a href="/blog/tags/erlang/">Erlang</a></li>
+      <li><a href="/blog/tags/concurrency/">Concurrency</a></li>
+      <li><a href="/blog/tags/processes/">Processes</a></li>
+  </ul>
+</div>
+ 
+      </section>
+
+      <div id="main" role="main">
+        <p>I haven&rsquo;t been blogging about Elixir lately, and that&rsquo;s only because I&rsquo;ve been overwhelmed.</p>
+
+<p>Coming up with new blog posts has been slightly challenging to say the least. Writing about Elixir&rsquo;s features are great, but I really wanted to get down into the fundamentals: Erlang, OTP and designing Erlang/OTP programs.</p>
+
+<p>I have since bought myself a couple more Erlang books that I can&rsquo;t wait to get my hands on - <a href="http://shop.oreilly.com/product/9780596518189.do">Erlang Programming</a>, <a href="http://www.manning.com/logan/">Erlang and OTP in Action</a>, and <a href="http://www.springer.com/computer/swe/book/978-1-4614-4462-6">Handbook of Neuroevolution in Erlang</a>.</p>
+
+<p>It was Corey Haines&rsquo; endorsement that compelled me the buy <em>Handbook of Neuroevolution in Erlang</em>. (800 pages of awesome, that was how he vaguely put it.)</p>
+
+<h2>Introducing, <em>Elixir By Example</em></h2>
+
+<p>Learning a new language is best done via experimentation. So I&rsquo;m starting a new series - Elixir by Example.</p>
+
+<p>A nice touch of <em>Erlang Programming</em> is the end of chapter exercises. Since I&rsquo;m working on that book now, I will pick the interesting ones that I have attempted (and struggled with!) and share my solutions written in Elixir. </p>
+
+<h2>And without further ado &hellip;</h2>
+
+<p>Here&rsquo;s the problem that we&rsquo;ll be tackling today:</p>
+
+<blockquote>
+<p>Write a function which starts N processes in a ring, and sends a message M times 
+around all the processes in the ring. After the messages have been sent the processes
+should terminate gracefully.</p>
+</blockquote>
+
+<p>And for the more visually-inclined:</p>
+
+<p><img alt="Process ring" src="/images/process_ring.gif" /></p>
+
+<p>(Source: <a href="http://www.erlang.org/course/exercises.html">http://www.erlang.org</a>)</p>
+
+<p>Here&rsquo;s the skeleton of the program:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Ring</span> <span class="k">do</span>
+
+  <span class="k">def</span> <span class="n">run</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span> <span class="k">do</span>
+    <span class="o">...</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">start_process</span> <span class="k">do</span>
+    <span class="o">...</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="k">loop</span><span class="p">(</span><span class="n">next_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">receive</span> <span class="k">do</span>
+      <span class="o">...</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+<h2>The Loop</h2>
+
+<p>We begin with easy part, the <code>loop</code> function:</p>
+<div class="highlight"><pre class="highlight elixir"><code>  <span class="k">def</span> <span class="k">loop</span><span class="p">(</span><span class="n">next_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">receive</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:message</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="mi">0</span><span class="p">}</span> <span class="o">-&gt;</span> 
+        <span class="n">next_pid</span> <span class="o">&lt;-</span> <span class="p">{</span><span class="ss">:message</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="mi">0</span><span class="p">}</span>
+        <span class="ss">:ok</span>
+      <span class="p">{</span><span class="ss">:message</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">m</span><span class="p">}</span> <span class="o">-&gt;</span> 
+        <span class="n">next_pid</span> <span class="o">&lt;-</span> <span class="p">{</span><span class="ss">:message</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">m</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span>
+        <span class="k">loop</span><span class="p">(</span><span class="n">next_pid</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre></div>
+<p>There are two kinds of messages we would receive: <code>m &gt; 0</code> and <code>m = 0</code>. </p>
+
+<p>In the former case, we will send the same message, with <code>m</code> decremented, then call <code>loop</code> again so that the process is ready to receive the next message.</p>
+
+<p>In the latter, we will forward the <code>m == 0</code> message to the next process, which is our signal for the process to exit.</p>
+
+<p>So how do we know which process to send the message to? An easy option would be to simply pass in the pid of the next message into the <code>loop</code> function.</p>
+
+<p>Now that we have settled on our <code>loop</code> function, we can start thinking about setting up our process ring.</p>
+
+<h2>The Process Ring</h2>
+
+<p>The main difficulty in this problem is setting up the process ring. The approach I chose was for each process to spawn the next. But how do you link the last process back to the first? </p>
+
+<p>I can think of at least 2 approaches. This post will talk about one of them. I will cover the next approach in a separate post.</p>
+
+<p>Pattern matching is especially suited for thinking through all the cases. We have 3 to consider:</p>
+
+<ol>
+<li>First Process</li>
+<li>Intermediate Processes</li>
+<li>Last Process</li>
+</ol>
+
+<p>Our problem would be that much easier if we have a way to link back the first process to the last, or vice versa. We cannot store state in Elixir/Erlang, as least not in the traditional sense. But, we definitely can pass state around via <em>message passing</em> and <em>recursion</em>. </p>
+
+<p>The function <code>start_process</code> will spawn one process, which would recursively spawn the next, until the <code>count</code> is 0. Then, it runs <code>loop</code>, so that each of the spawned process can begin handling messages. </p>
+
+<p>As mentioned previously, there are 3 separate cases to handle.</p>
+
+<h3>1. The First Process</h3>
+<div class="highlight"><pre class="highlight elixir"><code>  <span class="k">def</span> <span class="n">start_process</span><span class="p">(</span><span class="n">count</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">spawn_link</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="ss">:start_process</span><span class="p">,</span> <span class="p">[</span><span class="n">count</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span>  <span class="n">self</span><span class="p">])</span>
+    <span class="k">loop</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+  <span class="k">end</span>
+</code></pre></div>
+<p>The <code>start_process/1</code> function takes the <code>count</code>, spawns another process, passing in the decremented <code>count</code> and it&rsquo;s own pid. This pid belongs to the last process, and is also how we remember the pid of the last process. </p>
+
+<h3>2. The Intermediate Processes</h3>
+
+<p>The trick here is to realize that we can store the last pid, and use it when we are spawning the last process. For intermediate processes (All processes <em>except</em> the first and last spawned process) we simply pass the pid around using <code>last</code> as an argument.</p>
+
+<p>Otherwise, the function looks similar to the previous <code>start_process/1</code>.</p>
+<div class="highlight"><pre class="highlight elixir"><code>  <span class="k">def</span> <span class="n">start_process</span><span class="p">(</span><span class="n">count</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">spawn_link</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="ss">:start_process</span><span class="p">,</span> <span class="p">[</span><span class="n">count</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">last</span><span class="p">])</span>
+    <span class="k">loop</span><span class="p">(</span><span class="n">pid</span><span class="p">)</span>
+  <span class="k">end</span>
+</code></pre></div>
+<h3>3. The Last Process</h3>
+
+<p>When <code>count</code> is 0, we know that we have spawned our last process. This time, we can finally make use of the pid (stored in <code>last</code>) and link the first process to the last.</p>
+<div class="highlight"><pre class="highlight elixir"><code>  <span class="k">def</span> <span class="n">start_process</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">last</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">loop</span><span class="p">(</span><span class="n">last</span><span class="p">)</span>
+  <span class="k">end</span>
+</code></pre></div>
+<h3>Tying it all together</h3>
+
+<p>We need a main entry point. <code>run</code> takes in all the necessary parameters, and then spawns the first process. By the time <code>pid = spawn_link(__MODULE__, :start_process, [n-1])</code> completes, our ring would be set up. </p>
+
+<p>To get things going, the initial message is then sent to the first process with <code>pid &lt;- {:message, message, m}</code></p>
+<div class="highlight"><pre class="highlight elixir"><code>  <span class="k">def</span> <span class="n">run</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">pid</span> <span class="o">=</span> <span class="n">spawn_link</span><span class="p">(</span><span class="bp">__MODULE__</span><span class="p">,</span> <span class="ss">:start_process</span><span class="p">,</span> <span class="p">[</span><span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">pid</span> <span class="o">&lt;-</span> <span class="p">{</span><span class="ss">:message</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">m</span><span class="p">}</span>
+  <span class="k">end</span>
+</code></pre></div>
+<h3>Concluding Remarks</h3>
+
+<p>The full source code located <a href="https://github.com/benjamintanweihao/erlang_programming_exercises/blob/master/chapter_4/ring_one.ex">here</a>. I encourage you to play with it, and then try this exercise out for yourself.</p>
+
+<p>This problem proved to be pretty difficult to me, and there a couple of stumbling roadblocks:</p>
+
+<h4>Process Termination</h4>
+
+<p>Making sure all the processes were terminated after <code>m = 0</code> took a little thinking and a lot of guesswork. The only reason I noticed this was I fired up <code>:pman.start</code>. </p>
+
+<p>After running the program I noticed that the <code>loop</code> processes were lingering around. See if you can replicate this effect by removing just <em>one</em> line in the program):</p>
+
+<p><img alt="Ring bug" src="/images/ring_bug.png" /></p>
+
+<h4>Ring Setup</h4>
+
+<p>I would be the first to admit that figuring this out independently proved too challenging and time consuming. Therefore I had to cheat a little and see how others approached the same problem. </p>
+
+<p>I personally think you shouldn&rsquo;t feel too bad about this, as long as you learn. (:</p>
+
+<p>Thanks for reading!</p>
+
+      </div>
+      
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'benjamintanslearningswritings'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+      <div class="spacing"></div>
+    </div>
+
+      <footer>
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2>Let's Stay In Touch!</h2>
+          <p>Sign up to receive updates on my latest posts and books!</p>
+          <div class="spacing"></div>
+          <!-- Begin MailChimp Signup Form -->
+
+          <div id="mc_embed_signup" class="col-md-8 col-md-push-2">
+            <form action="//exotpbook.us3.list-manage.com/subscribe/post?u=e6c489d8ae654374bfa191d29&amp;id=a7b19f5882" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+            <div id="mc_embed_signup_scroll">      
+              
+              <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn">
+
+              <div class="mc-field-group form-group" style="overflow: hidden; padding-right: 1em;">
+                <input type="email" value="" name="EMAIL" class="required email form-control" id="mce-EMAIL" placeholder="Email Address">
+              </div>
+              <div id="mce-responses" class="clear">
+                <div class="response" id="mce-error-response" style="display:none"></div>
+                <div class="response" id="mce-success-response" style="display:none"></div>
+              </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+              <div style="position: absolute; left: -5000px;"><input type="text" name="b_e6c489d8ae654374bfa191d29_a7b19f5882" tabindex="-1" value=""></div>
+            </form>
+          </div>
+
+          <!--End mc_embed_signup-->
+          <div class="spacing"></div>
+      
+          <ul class="list-inline social-btns">
+            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
+            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
+            <li><a href="#top" class="page-scroll"><i class="fa fa-angle-double-up color3"></i></a></li>
+            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
+            <li><a href="http://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
+          </ul>
+          <small>Copyright by Benjamin Tan Wei Hao &copy;</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Rainbow Bar -->
+  <div class="bottom-bar"></div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" type="text/javascript"></script>
+<script src="/javascripts/modernizr.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+<script src="/javascripts/ga.js" type="text/javascript"></script>
+
+
+  </body>
+</html>

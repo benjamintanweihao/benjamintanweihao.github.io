@@ -1,0 +1,144 @@
+/* Blog Specific Styles */
+/* Colors */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Droid Sans', sans-serif;
+}
+h1 {
+  font-size: 3em;
+  font-weight: 700;
+  line-height: 1.2em;
+  padding: 0;
+  text-align: center;
+}
+h2 {
+  font-size: 2.5em;
+  font-weight: 700;
+  line-height: 1.0em;
+  margin-top: 1.6em;
+}
+h3 {
+  font-size: 2.0em;
+  font-weight: 700;
+  line-height: 1.0em;
+  margin-top: 1.6em;
+}
+h4 {
+  font-size: 1.4em;
+  font-weight: 700;
+  line-height: 1.0em;
+  margin-top: 1.2em;
+}
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 100%;
+}
+time {
+  color: #ADADAD;
+  display: block;
+  font-family: 'Open Sans', sans-serif;
+}
+.wrapper {
+  max-width: -webkit-calc(740px);
+  max-width: calc(740px);
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 30px;
+  padding-left: 30px;
+}
+.wrapper p {
+  margin-top: 1.4em;
+}
+.wrapper p,
+.wrapper li {
+  font-family: 'Open Sans', sans-serif;
+  font-size: 20px;
+  line-height: 1.6em;
+}
+.wrapper pre {
+  margin: 2em 0;
+}
+.author {
+  font-family: 'Georgia', sans-serif;
+  font-size: 1.2em;
+  font-style: italic;
+  margin-top: 1.5em;
+  margin-bottom: 6px;
+}
+.author:before {
+  color: #ADADAD;
+  content: "by ";
+}
+.article-tag {
+  text-transform: uppercase;
+}
+.article-tag a {
+  color: #cb283e;
+  font-size: 0.6em;
+  text-decoration: none;
+}
+.article-entry {
+  border-bottom: 1px dotted;
+  border-color: lightgrey;
+  padding: 1.5em;
+}
+.article-entry .article-tag {
+  margin-bottom: 0;
+}
+.article-entry h2.title {
+  margin: 0;
+  -webkit-transition: all 0.3s;
+  -moz-transition: all 0.3s;
+  -ms-transition: all 0.3s;
+  -o-transition: all 0.3s;
+}
+.article-entry h2.title a {
+  font-size: 0.8em;
+  color: #101010;
+  text-decoration: none;
+}
+.article-entry h2.title a:hover {
+  color: #cb283e;
+}
+nav.navbar a.navbar-brand {
+  border: none;
+  color: #f2b836;
+  font-family: 'Ubuntu', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 18px 15px;
+  text-transform: uppercase;
+}
+nav.navbar a.navbar-brand:hover {
+  border: none;
+  color: #f29900;
+  text-decoration: none;
+}
+nav.navbar a.navbar-brand img.avatar-image {
+  display: inline-block;
+  height: 80px;
+  width: 80px;
+  margin-top: -24px;
+  margin-left: 1em;
+  margin-right: 1em;
+}
+nav.navbar a.navbar-brand .avatar-name {
+  display: inline-block;
+  vertical-align: top;
+}
+ul.nav.navbar-nav {
+  margin-top: 7px;
+}
+section#top {
+  padding-top: 4em;
+  padding-bottom: 0.1em;
+}
+span.published-date {
+  text-align: right;
+}

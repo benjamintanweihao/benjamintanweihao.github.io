@@ -1,0 +1,366 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="Benjamin Tan Wei Hao">
+    <title>Benjamin Tan's Learnings & Writings - Producer-Consumer problem in Elixir</title>
+    <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/feed.xml" />
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/styles.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/blog.css" rel="stylesheet" type="text/css" />
+    <link href="/stylesheets/solarized-dark.css" rel="stylesheet" type="text/css" />
+
+    <link href='http://fonts.googleapis.com/css?family=Droid+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+  </head>
+  <body id="page-top" class="index">
+    <div class="top-bar"></div>
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <!-- Brand and toggle get grouped together for better mobile display -->
+        <div class="navbar-header page-scroll">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">
+            <img class="img-circle avatar-image" src="/images/portrait.png" alt="Portrait" />
+            <span class="avatar-name">Benjamin Tan</span>
+          </a>
+        </div>
+
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav navbar-right">
+            <li>
+              <a href="/blog" class="color1">Archive</a>
+            </li>
+            <li>
+              <a href="http://www.manning.com/tanweihao?a_aid=exotpbook&amp;a_bid=99f537ec" class="color2" target="_blank">My Elixir Book</a>
+            </li>
+            <li>
+              <a href="http://confreaks.com/presenters/2702-benjamin-tan" class="color3" target="_blank">Speaking</a>
+            </li>
+            <li>
+              <a href="https://github.com/benjamintanweihao" class="color4" target="_blank">Code</a>
+            </li>
+            <li>
+              <a href="/" class="color5" target="_blank">About</a>
+            </li>
+          </ul>
+        </div> <!-- /.navbar-collapse -->
+      </div> <!-- /.container -->
+    </nav>
+
+    <div class="wrapper">
+      <section id="top">
+          <div class="text-center">
+  <h1>Producer-Consumer problem in Elixir</h1>
+  <div class="author">Benjamin Tan</div>
+  <time>Oct 11, 2014</time>
+  <ul class="article-tag list-inline">
+      <li><a href="/blog/tags/elixir/">Elixir</a></li>
+      <li><a href="/blog/tags/erlang/">Erlang</a></li>
+      <li><a href="/blog/tags/concurrency/">Concurrency</a></li>
+      <li><a href="/blog/tags/producer/">Producer</a></li>
+      <li><a href="/blog/tags/consumer/">Consumer</a></li>
+  </ul>
+</div>
+ 
+      </section>
+
+      <div id="main" role="main">
+        <p>I was searching for an implementation for the <a href="en.wikipedia.org/wiki/Producer–consumer_problem">Producer-Consumer</a> problem in <em>Erlang</em>, but apparently Google wasn&rsquo;t on my side:</p>
+
+<p><img src="http://i.imgur.com/TWIpBxO.png" style="width:500px"/></p>
+
+<p>Having had no choice, and seeing enough examples in Java that made my eyes bleed, I was left to try out an implementation on my own. </p>
+
+<h2>Here is how it looks like</h2>
+
+<p>Here&rsquo;s a running example of the implementation I did, with 2 producers and 5 workers:</p>
+
+<p><img src="https://camo.githubusercontent.com/6678fc22d00b7c630244ce233d243dcf9c7f5d9c/687474703a2f2f692e696d6775722e636f6d2f6932526f5965792e676966" style="width:500px"/></p>
+
+<p>If you are interested, the repo is located on <a href="https://github.com/benjamintanweihao/procon/">GitHub</a>.</p>
+
+<h2>The Moving Parts</h2>
+
+<p>My implementation consists of 3 moving parts: the <em>producer</em>, <em>consumer</em>, and <em>manager</em>. Let&rsquo;s start with the <code>manager.ex</code>.</p>
+
+<h2><code>manager.ex</code></h2>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Manager</span> <span class="k">do</span>
+
+  <span class="k">def</span> <span class="n">start</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">spawn</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span> 
+      <span class="n">consumer_pids</span> <span class="o">=</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="mi">1</span><span class="o">..</span><span class="n">num_workers</span><span class="p">,</span> <span class="k">fn</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="no">Consumer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="k">end</span><span class="p">)</span>
+      <span class="k">loop</span><span class="p">(</span><span class="n">consumer_pids</span><span class="p">)</span>
+    <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="k">loop</span><span class="p">([])</span> <span class="k">do</span>
+    <span class="k">receive</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:request</span><span class="p">,</span> <span class="n">producer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="k">loop</span><span class="p">([])</span>
+
+      <span class="p">{</span><span class="ss">:done</span><span class="p">,</span> <span class="n">consumer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="k">loop</span><span class="p">([</span><span class="n">consumer_pid</span><span class="p">])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="k">loop</span><span class="p">([</span><span class="n">first</span> <span class="o">|</span> <span class="n">rest</span><span class="p">]</span> <span class="o">=</span> <span class="n">consumer_pids</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">receive</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:request</span><span class="p">,</span> <span class="n">producer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="n">send</span> <span class="n">producer_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">first</span><span class="p">}</span>
+        <span class="k">loop</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+
+      <span class="p">{</span><span class="ss">:done</span><span class="p">,</span> <span class="n">consumer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="k">loop</span><span class="p">([</span><span class="n">consumer_pid</span> <span class="o">|</span> <span class="n">consumer_pids</span><span class="p">])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+<p>We begin with <code>Manager.start/1</code>:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Manager</span> <span class="k">do</span>
+
+  <span class="k">def</span> <span class="n">start</span><span class="p">(</span><span class="n">num_workers</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">spawn</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span> 
+      <span class="n">consumer_pids</span> <span class="o">=</span> <span class="no">Enum</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="mi">1</span><span class="o">..</span><span class="n">num_workers</span><span class="p">,</span> <span class="k">fn</span> <span class="n">_</span> <span class="o">-&gt;</span> <span class="no">Consumer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">self</span><span class="p">)</span> <span class="k">end</span><span class="p">)</span>
+      <span class="k">loop</span><span class="p">(</span><span class="n">consumer_pids</span><span class="p">)</span>
+    <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="c1"># ...</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>The <code>start/1</code> function takes in a non-negative integer, and in return, spawns up <code>num_workers</code> of <code>Consumer</code>s. The resulting <code>consumer_pids</code>, a list of consumer pids, that are the passed in as the argument for <code>loop/1</code>.</p>
+
+<p>The main idea is consumers that are <em>available</em> will be part of the loo&rsquo;s arguments. This leads naturally to 2 cases, either we have consumers, or we don&rsquo;t:</p>
+
+<h4>Case 1: No more consumers</h4>
+
+<p>This means that all our consumers are busy.</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Manager</span> <span class="k">do</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="k">loop</span><span class="p">([])</span> <span class="k">do</span>
+    <span class="k">receive</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:request</span><span class="p">,</span> <span class="n">producer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="k">loop</span><span class="p">([])</span>
+
+      <span class="p">{</span><span class="ss">:done</span><span class="p">,</span> <span class="n">consumer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="k">loop</span><span class="p">([</span><span class="n">consumer_pid</span><span class="p">])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+</code></pre></div>
+<p>Whenever a producer had something to produce, it will send a <code>{:request, producer_pid}</code> message to the manager. In this case, the manager is busy, so it will simply not respond, and call loop on itself.</p>
+
+<p>Whenever a consumer had completed processing something, it will send a message to the manager with a <code>{:done, consumer_pid}</code>. This also means that the said consumer is available for a new job. Therefore the loop contains that <code>consumer_pid</code>.</p>
+
+<h4>Case 2: Happy path</h4>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Manager</span> <span class="k">do</span>
+  <span class="c1"># ...</span>
+  <span class="k">def</span> <span class="k">loop</span><span class="p">([</span><span class="n">first</span> <span class="o">|</span> <span class="n">rest</span><span class="p">]</span> <span class="o">=</span> <span class="n">consumer_pids</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">receive</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:request</span><span class="p">,</span> <span class="n">producer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="n">send</span> <span class="n">producer_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">first</span><span class="p">}</span>
+        <span class="k">loop</span><span class="p">(</span><span class="n">rest</span><span class="p">)</span>
+
+      <span class="p">{</span><span class="ss">:done</span><span class="p">,</span> <span class="n">consumer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="k">loop</span><span class="p">([</span><span class="n">consumer_pid</span> <span class="o">|</span> <span class="n">consumer_pids</span><span class="p">])</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Compare this with the previous case. Here, we can reply to the producer with <code>{:of, first}</code>, where <code>first</code> is the first pid in the list of <code>consumer_pids</code>. When <code>{:done, consumer_pid}</code> is received from the consumer, then <code>consumer_pid</code> is prepended to the list of <code>consumer_pids</code>.</p>
+
+<h2><code>producer.ex</code></h2>
+
+<p>Now let&rsquo;s turn our attention to the producer:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Producer</span> <span class="k">do</span>
+  <span class="nv">@timeout</span> <span class="mi">2000</span>
+
+  <span class="k">def</span> <span class="n">start</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">spawn</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span> <span class="n">run</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="n">run</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Stream</span><span class="o">.</span><span class="n">repeatedly</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span>
+      <span class="n">send</span> <span class="n">manager_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:request</span><span class="p">,</span> <span class="n">self</span><span class="p">}</span> 
+
+      <span class="k">receive</span> <span class="k">do</span>
+        <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">consumer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+          <span class="ss">:random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="ss">:erlang</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+          <span class="n">send</span> <span class="n">consumer_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:run</span><span class="p">,</span> <span class="ss">:random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">3</span><span class="p">)}</span>
+
+      <span class="k">after</span> <span class="nv">@timeout</span> <span class="o">-&gt;</span>
+        <span class="n">send</span> <span class="n">manager_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:request</span><span class="p">,</span> <span class="n">self</span><span class="p">}</span> 
+      <span class="k">end</span>
+    <span class="k">end</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">to_list</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+<p>When we start the producer, we supply the <code>manager_pid</code>, so that both parties can communicate:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Producer</span> <span class="k">do</span>
+  <span class="nv">@timeout</span> <span class="mi">2000</span>
+
+  <span class="k">def</span> <span class="n">start</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">spawn</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span> <span class="n">run</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+  <span class="c1"># omitted ...</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>In order to simulate a never ending stream, I used <code>Stream.repeatedly/1</code> and <code>Enum.to_list</code>:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Producer</span> <span class="k">do</span>
+  <span class="c1"># ....</span>
+  <span class="k">def</span> <span class="n">run</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Stream</span><span class="o">.</span><span class="n">repeatedly</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span>
+      <span class="c1"># ...</span>
+    <span class="k">end</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">to_list</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Now, let&rsquo;s take a look at the messages being sent and received:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Producer</span> <span class="k">do</span>
+  <span class="c1"># ....</span>
+  <span class="k">def</span> <span class="n">run</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="no">Stream</span><span class="o">.</span><span class="n">repeatedly</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span>
+      <span class="n">send</span> <span class="n">manager_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:request</span><span class="p">,</span> <span class="n">self</span><span class="p">}</span> 
+
+      <span class="k">receive</span> <span class="k">do</span>
+        <span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="n">consumer_pid</span><span class="p">}</span> <span class="o">-&gt;</span>
+          <span class="ss">:random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="ss">:erlang</span><span class="o">.</span><span class="n">now</span><span class="p">)</span>
+          <span class="n">send</span> <span class="n">consumer_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:run</span><span class="p">,</span> <span class="ss">:random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="mi">3</span><span class="p">)}</span>
+
+      <span class="k">after</span> <span class="nv">@timeout</span> <span class="o">-&gt;</span>
+        <span class="n">send</span> <span class="n">manager_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:request</span><span class="p">,</span> <span class="n">self</span><span class="p">}</span> 
+      <span class="k">end</span>
+    <span class="k">end</span><span class="p">)</span> <span class="o">|&gt;</span> <span class="no">Enum</span><span class="o">.</span><span class="n">to_list</span>
+  <span class="k">end</span>
+<span class="k">end</span>
+</code></pre></div>
+<p>Just <em>before</em> the <code>receive</code> block, the producer first sends a request to the manager for a <code>consumer_pid</code>. If it gets one, then it will send a message to the consumer to run the job.</p>
+
+<p>Here&rsquo;s the slightly more interesting bit: If it <em>doesn&rsquo;t</em> receive a reply, we <em>timeout</em> after <code>@timeout</code> (2 seconds, in this case), <em>and</em> send the another request again. Why will this timeout in the first place? That&rsquo;s because the manager will simply not answer a request if there are <em>no consumers available</em>.</p>
+
+<h2><code>consumer.ex</code></h2>
+
+<p>Implementing the consumer is simple:</p>
+<div class="highlight"><pre class="highlight elixir"><code><span class="k">defmodule</span> <span class="no">Consumer</span> <span class="k">do</span>
+
+  <span class="k">def</span> <span class="n">start</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="n">spawn</span><span class="p">(</span><span class="k">fn</span> <span class="o">-&gt;</span> <span class="k">loop</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">end</span><span class="p">)</span>
+  <span class="k">end</span>
+
+  <span class="k">def</span> <span class="k">loop</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span> <span class="k">do</span>
+    <span class="k">receive</span> <span class="k">do</span>
+      <span class="p">{</span><span class="ss">:run</span><span class="p">,</span> <span class="n">work</span><span class="p">}</span> <span class="o">-&gt;</span>
+        <span class="ss">:timer</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="n">work</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
+        <span class="n">send</span> <span class="n">manager_pid</span><span class="p">,</span> <span class="p">{</span><span class="ss">:done</span><span class="p">,</span> <span class="n">self</span><span class="p">}</span>
+        <span class="k">loop</span><span class="p">(</span><span class="n">manager_pid</span><span class="p">)</span>
+    <span class="k">end</span>
+  <span class="k">end</span>
+
+<span class="k">end</span>
+</code></pre></div>
+<p>Similar to the producer, we pass in the <code>manager_pid</code> because the consumer needs to talk to the manager. The consumer only responds to one message, <code>{:run, work}</code>. All it does is sleep a couple of seconds (to simulate doing work), then inform the manager that it should be added back into the list of available <code>consumer_pids</code>.</p>
+
+<h2>That&rsquo;s it!</h2>
+
+<p>This little exercise took me quite a while to complete, because I hit into starvation issues along the way, although that was due to a bad pattern match on my part.</p>
+
+<p>This technique might come in useful when the producer produces more data than the consumers can handle, and we have to tell the producer to slow down somehow.</p>
+
+<h2>One more thing &hellip;</h2>
+
+<p><img alt="Book cover" src="https://s3.amazonaws.com/erlang-in-anger/book-cover.png" /></p>
+
+<p>I&rsquo;ve started reading <a href="http://www.erlang-in-anger.com/">Erlang in Anger</a>, <strong>a free ebook</strong> by Fred Hebert, of Learn You Some Erlang for Great Good! fame. Lots of interesting stuff and advice on running Erlang in production. Highly recommend reading it.</p>
+
+<p>Thanks for reading!</p>
+
+      </div>
+      
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'benjamintanslearningswritings'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
+
+      <div class="spacing"></div>
+    </div>
+
+      <footer>
+    <div class="container">
+      <div class="spacing"></div>
+      <div class="row">
+        <div class="col-md-12 text-center">
+          <h2>Let's Stay In Touch!</h2>
+          <p>Sign up to receive updates on my latest posts and books!</p>
+          <div class="spacing"></div>
+          <!-- Begin MailChimp Signup Form -->
+
+          <div id="mc_embed_signup" class="col-md-8 col-md-push-2">
+            <form action="//exotpbook.us3.list-manage.com/subscribe/post?u=e6c489d8ae654374bfa191d29&amp;id=a7b19f5882" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+            <div id="mc_embed_signup_scroll">      
+              
+              <input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe" class="btn">
+
+              <div class="mc-field-group form-group" style="overflow: hidden; padding-right: 1em;">
+                <input type="email" value="" name="EMAIL" class="required email form-control" id="mce-EMAIL" placeholder="Email Address">
+              </div>
+              <div id="mce-responses" class="clear">
+                <div class="response" id="mce-error-response" style="display:none"></div>
+                <div class="response" id="mce-success-response" style="display:none"></div>
+              </div>    <!-- real people should not fill this in and expect good things - do not remove this or risk form bot signups-->
+              <div style="position: absolute; left: -5000px;"><input type="text" name="b_e6c489d8ae654374bfa191d29_a7b19f5882" tabindex="-1" value=""></div>
+            </form>
+          </div>
+
+          <!--End mc_embed_signup-->
+          <div class="spacing"></div>
+      
+          <ul class="list-inline social-btns">
+            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
+            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
+            <li><a href="#top" class="page-scroll"><i class="fa fa-angle-double-up color3"></i></a></li>
+            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
+            <li><a href="http://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
+          </ul>
+          <small>Copyright by Benjamin Tan Wei Hao &copy;</small>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- Rainbow Bar -->
+  <div class="bottom-bar"></div>
+
+    <script src="https://code.jquery.com/jquery-2.1.3.min.js" type="text/javascript"></script>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js" type="text/javascript"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js" type="text/javascript"></script>
+<script src="/javascripts/modernizr.js" type="text/javascript"></script>
+<script src="/javascripts/custom.js" type="text/javascript"></script>
+<script src="/javascripts/ga.js" type="text/javascript"></script>
+
+
+  </body>
+</html>
