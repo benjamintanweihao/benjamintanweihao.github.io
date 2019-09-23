@@ -5,10 +5,101 @@
   <id>http://benjamintan.io/blog</id>
   <link href="http://benjamintan.io/blog"/>
   <link href="http://benjamintan.io/feed.xml" rel="self"/>
-  <updated>2019-09-22T05:40:00+00:00</updated>
+  <updated>2019-09-23T15:55:00+00:00</updated>
   <author>
     <name>Benjamin Tan Wei Hao</name>
   </author>
+  <entry>
+    <title>Battling the Dreaded Black Screen in VNC</title>
+    <link rel="alternate" href="http://benjamintan.io/blog/2019/09/23/battling-the-dreaded-black-screen-in-vnc/"/>
+    <id>http://benjamintan.io/blog/2019/09/23/battling-the-dreaded-black-screen-in-vnc/</id>
+    <published>2019-09-23T15:55:00+00:00</published>
+    <updated>2019-09-23T15:58:42+00:00</updated>
+    <author>
+      <name>Benjamin Tan Wei Hao</name>
+    </author>
+    <content type="html">&lt;p&gt;VNC is an awesome tool. It&amp;rsquo;s super fast (of course, in a local network!), and gets the job done when a plain terminal doesn&amp;rsquo;t cut it. &lt;/p&gt;
+
+&lt;p&gt;However, there&amp;rsquo;s nothing more irritating then seeing the dreaded black or grey VNC screen:&lt;/p&gt;
+
+&lt;p&gt;&lt;img alt="Mfavo" src="https://i.stack.imgur.com/mfAVO.png" /&gt;&lt;/p&gt;
+
+&lt;p&gt;It is such a productivity suck  and pain in the ass to deal with. I&amp;rsquo;ve had to deal with this for more than one occasion so I&amp;rsquo;m finally writing all the troubleshooting steps so that future me will thank current me.&lt;/p&gt;
+
+&lt;p&gt;These steps were tried on Tiger VNC on Ubuntu, but I suspect they would apply to Tight VNC and the like.&lt;/p&gt;
+
+&lt;p&gt;These are some steps that might help you to escape the VNC void.&lt;/p&gt;
+
+&lt;h3&gt;1: Kill all existing VNC servers first&lt;/h3&gt;
+
+&lt;p&gt;First do a &lt;code&gt;vncserver -list&lt;/code&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;% vncserver -kill :0 # or whatever number was listed before
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;2: Do not use &lt;code&gt;sudo&lt;/code&gt; to launch &lt;code&gt;vncserver&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;Firstly, do not use &lt;code&gt;sudo&lt;/code&gt; to launch &lt;code&gt;vncserver&lt;/code&gt;. This creates files in the wrong permissions that would mess up non-&lt;code&gt;sudo&lt;/code&gt; sessions.
+* Kill all other VNC servers first&lt;/p&gt;
+
+&lt;h3&gt;3. Check file permissions of &lt;code&gt;~/.Xauthority&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;Check permissions are set to &lt;code&gt;$USER&lt;/code&gt; for the following files:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;~/.Xauthority&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;~/.ICEauthority&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3&gt;4. Is &lt;code&gt;$USER&lt;/code&gt; logged in anywhere else?&lt;/h3&gt;
+
+&lt;p&gt;Check that &lt;code&gt;$USER&lt;/code&gt; is not logged in with the GUI. &lt;/p&gt;
+
+&lt;h3&gt;5. Check &lt;code&gt;~/.vnc/xstartup&lt;/code&gt;&lt;/h3&gt;
+
+&lt;p&gt;The following &lt;code&gt;~/.vnc/xstartup&lt;/code&gt; works. Find one which is known to work for your system. &lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre class="highlight shell"&gt;&lt;code&gt;&lt;span class="c"&gt;#!/bin/sh&lt;/span&gt;
+
+&lt;span class="nb"&gt;unset &lt;/span&gt;SESSION_MANAGER
+&lt;span class="nb"&gt;unset &lt;/span&gt;DBUS_SESSION_BUS_ADDRESS
+&lt;span class="nv"&gt;OS&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;&lt;span class="nb"&gt;uname&lt;/span&gt; &lt;span class="nt"&gt;-s&lt;/span&gt;&lt;span class="sb"&gt;`&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="nv"&gt;$OS&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s1"&gt;'Linux'&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then
+  case&lt;/span&gt; &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="nv"&gt;$WINDOWMANAGER&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt; &lt;span class="k"&gt;in&lt;/span&gt;
+    &lt;span class="k"&gt;*&lt;/span&gt;gnome&lt;span class="k"&gt;*&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+      &lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="nt"&gt;-e&lt;/span&gt; /etc/SuSE-release &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then
+        &lt;/span&gt;&lt;span class="nv"&gt;PATH&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="nv"&gt;$PATH&lt;/span&gt;:/opt/gnome/bin
+        &lt;span class="nb"&gt;export &lt;/span&gt;PATH
+      &lt;span class="k"&gt;fi&lt;/span&gt;
+      &lt;span class="p"&gt;;;&lt;/span&gt;
+  &lt;span class="k"&gt;esac&lt;/span&gt;
+&lt;span class="k"&gt;fi
+if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="nt"&gt;-x&lt;/span&gt; /etc/X11/xinit/xinitrc &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then
+  &lt;/span&gt;&lt;span class="nb"&gt;exec&lt;/span&gt; /etc/X11/xinit/xinitrc
+&lt;span class="k"&gt;fi
+if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="nt"&gt;-f&lt;/span&gt; /etc/X11/xinit/xinitrc &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then
+  &lt;/span&gt;&lt;span class="nb"&gt;exec &lt;/span&gt;sh /etc/X11/xinit/xinitrc
+&lt;span class="k"&gt;fi&lt;/span&gt;
+&lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="nt"&gt;-r&lt;/span&gt; &lt;span class="nv"&gt;$HOME&lt;/span&gt;/.Xresources &lt;span class="o"&gt;]&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&amp;amp;&lt;/span&gt; xrdb &lt;span class="nv"&gt;$HOME&lt;/span&gt;/.Xresources
+xsetroot &lt;span class="nt"&gt;-solid&lt;/span&gt; grey
+xterm &lt;span class="nt"&gt;-geometry&lt;/span&gt; 80x24+10+10 &lt;span class="nt"&gt;-ls&lt;/span&gt; &lt;span class="nt"&gt;-title&lt;/span&gt; &lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="nv"&gt;$VNCDESKTOP&lt;/span&gt;&lt;span class="s2"&gt; Desktop"&lt;/span&gt; &amp;amp;
+twm &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
+&lt;h3&gt;6. Check &lt;code&gt;~/.xsession-error&lt;/code&gt; for clues&lt;/h3&gt;
+
+&lt;p&gt;This is my favorite and by far the most useful tip. &lt;/p&gt;
+
+&lt;p&gt;Whenever there&amp;rsquo;s something wrong with the X Window system, it gets logged into this &lt;code&gt;~/.xsession-error&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Below are some of the example error messages that helped with troubleshooting:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;xfce4-session: Unable to access file /home/benjamintan/.ICEauthority: Permission denied&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;/usr/bin/x-session-manager: X server already running on display :2 xfce4-session: Another session manager is already running&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2&gt;Good Luck!&lt;/h2&gt;
+
+&lt;p&gt;Hopefully, you&amp;rsquo;ll never have to encounter any VNC problems, but if you stumble upon then, I hope this is of some use to you.&lt;/p&gt;
+</content>
+  </entry>
   <entry>
     <title>Using PyCharm CE in Docker for Great Good!</title>
     <link rel="alternate" href="http://benjamintan.io/blog/2019/09/22/using-pycharm-ce-in-docker-for-great-good/"/>
@@ -1702,329 +1793,6 @@ OK (1 test)
 &lt;p&gt;I&amp;rsquo;ve started reading &lt;a href="http://www.erlang-in-anger.com/"&gt;Erlang in Anger&lt;/a&gt;, &lt;strong&gt;a free ebook&lt;/strong&gt; by Fred Hebert, of Learn You Some Erlang for Great Good! fame. Lots of interesting stuff and advice on running Erlang in production. Highly recommend reading it.&lt;/p&gt;
 
 &lt;p&gt;Thanks for reading!&lt;/p&gt;
-</content>
-  </entry>
-  <entry>
-    <title>Parsing the Wikipedia XML dump in Elixir using Erlsom (or, Big Data in Elixir)</title>
-    <link rel="alternate" href="http://benjamintan.io/blog/2014/10/01/parsing-wikipedia-xml-dump-in-elixir-using-erlsom/"/>
-    <id>http://benjamintan.io/blog/2014/10/01/parsing-wikipedia-xml-dump-in-elixir-using-erlsom/</id>
-    <published>2014-10-01T17:22:00+00:00</published>
-    <updated>2019-09-22T04:24:49+00:00</updated>
-    <author>
-      <name>Benjamin Tan Wei Hao</name>
-    </author>
-    <content type="html">&lt;p&gt;Seems like I&amp;rsquo;m the last person to learn about SAX, which stands for (Simple API for XML). I wanted a nice example for my &lt;a href="http://www.exotpbook.com"&gt;book&lt;/a&gt;, and one of the things I wanted to do was to parse Wikipedia. Turns out, Wikipedia provides XML dumps, which comes in at a hefty 10GB, compressed. Uncompressed, the single XML file weighs in at 50GB. Look Ma, I&amp;rsquo;m doing Big Data&lt;sup&gt;TM&lt;/sup&gt;!&lt;/p&gt;
-
-&lt;h2&gt;Why SAX?&lt;/h2&gt;
-
-&lt;p&gt;It is practically impossible to load the entire XML file into memory. This means that parsers that work by loading the entire DOM is out of the question. SAX parsers, on the other hand, work by reading the XML file sequentially, and fires off events when say, it encounters the start/end of an element.&lt;/p&gt;
-
-&lt;h2&gt;The State of XML Parsing in Erlang/Elixir&lt;/h2&gt;
-
-&lt;p&gt;I think Erlangers do not do a lot of XML parsing, judging by the lack of (readable) documentation. The official Erlsom documentation is an exception though, and that is what we are going to use.&lt;/p&gt;
-
-&lt;h2&gt;Getting SAXy with Wikipedia&lt;/h2&gt;
-
-&lt;p&gt;We are going to learn how to parse a &lt;strong&gt;huge&lt;/strong&gt; XML using Erlsom&amp;rsquo;s SAX parser. If you are unfamiliar with SAX, you will get a slightly better idea by the end of this article. You will also gain a greater appreciation of how Elixir&amp;rsquo;s pattern matching leads to a more declarative programming style – that is, expressing what you want, compared to &lt;em&gt;how&lt;/em&gt; to do it.&lt;/p&gt;
-
-&lt;p&gt;To follow along, you would need to download one of the Wikipedia dump from &lt;a href="http://meta.wikimedia.org/wiki/Data_dump_torrents"&gt;here&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3&gt;Creating a Project&lt;/h3&gt;
-
-&lt;p&gt;I&amp;rsquo;m using Elixir v1.0.0, and so should you. Go ahead and create a project, and give it a kick-ass name:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;% mix new saxy
-* creating README.md
-* creating .gitignore
-* creating mix.exs
-* creating config
-* creating config/config.exs
-* creating lib
-* creating lib/saxy.ex
-* creating test
-* creating test/test_helper.exs
-* creating test/saxy_test.exs
-
-Your mix project was created successfully.
-You can use mix to compile it, test it, and more:
-
-    cd saxy
-    mix test
-
-Run `mix help` for more commands.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Next, we need to pull in the Erlsom library. Open up &lt;code&gt;mix.exs&lt;/code&gt;, and add the necessary lines in &lt;code&gt;deps&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Saxy&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Mixfile&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="kn"&gt;use&lt;/span&gt; &lt;span class="no"&gt;Mix&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="no"&gt;Project&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;project&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;app:&lt;/span&gt; &lt;span class="ss"&gt;:saxy&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-     &lt;span class="ss"&gt;version:&lt;/span&gt; &lt;span class="s2"&gt;"0.0.1"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-     &lt;span class="ss"&gt;elixir:&lt;/span&gt; &lt;span class="s2"&gt;"~&amp;gt; 1.0.0-rc2"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
-     &lt;span class="ss"&gt;deps:&lt;/span&gt; &lt;span class="n"&gt;deps&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;application&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;applications:&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:logger&lt;/span&gt;&lt;span class="p"&gt;]]&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;defp&lt;/span&gt; &lt;span class="n"&gt;deps&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;[&lt;/span&gt;
-      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:erlsom&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;git:&lt;/span&gt; &lt;span class="s2"&gt;"git@github.com:willemdj/erlsom.git"&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; 
-    &lt;span class="p"&gt;]&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Then, do a &lt;code&gt;mix deps.get&lt;/code&gt; in the project directory to pull in all the necessary dependencies.&lt;/p&gt;
-
-&lt;h3&gt;Parsing XML using Erlsom&lt;/h3&gt;
-
-&lt;p&gt;On to the fun stuff. The meat of the application revolves around &lt;code&gt;:erlsom.parse_sax/4&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight erlang"&gt;&lt;code&gt;&lt;span class="nf"&gt;parse_sax&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;XML&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;Acc0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;EventFun&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;Options&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;AccOut&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;Rest&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-
-&lt;span class="nv"&gt;Xml&lt;/span&gt;      &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nf"&gt;int&lt;/span&gt;&lt;span class="p"&gt;()],&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;list&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="nv"&gt;Unicode&lt;/span&gt; &lt;span class="n"&gt;code&lt;/span&gt; &lt;span class="n"&gt;points&lt;/span&gt;
-&lt;span class="nv"&gt;Acc0&lt;/span&gt;     &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="nf"&gt;term&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;passed&lt;/span&gt; &lt;span class="n"&gt;to&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="nv"&gt;EventFun&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;
-&lt;span class="nv"&gt;Eventfun&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="k"&gt;fun&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;is&lt;/span&gt; &lt;span class="n"&gt;called&lt;/span&gt; &lt;span class="n"&gt;by&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;parser&lt;/span&gt; &lt;span class="n"&gt;whenever&lt;/span&gt; &lt;span class="n"&gt;it&lt;/span&gt; &lt;span class="n"&gt;has&lt;/span&gt; &lt;span class="n"&gt;parsed&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;bit&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="nv"&gt;Xml&lt;/span&gt; &lt;span class="n"&gt;input&lt;/span&gt; 
-&lt;span class="nv"&gt;Options&lt;/span&gt;  &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="nv"&gt;Option&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
-&lt;span class="nv"&gt;Option&lt;/span&gt;   &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;continuation_function&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;CState&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;CFunction&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; 
-&lt;span class="nv"&gt;AccOut&lt;/span&gt;   &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;a&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;result&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="n"&gt;last&lt;/span&gt; &lt;span class="n"&gt;invocation&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="nv"&gt;EventFun&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt; 
-&lt;span class="nv"&gt;Rest&lt;/span&gt;     &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;list&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;characters&lt;/span&gt; &lt;span class="n"&gt;that&lt;/span&gt; &lt;span class="n"&gt;follow&lt;/span&gt; &lt;span class="k"&gt;after&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="k"&gt;end&lt;/span&gt; &lt;span class="k"&gt;of&lt;/span&gt; &lt;span class="n"&gt;the&lt;/span&gt; &lt;span class="nv"&gt;XML&lt;/span&gt; &lt;span class="n"&gt;document&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The above is directy copied from the &lt;a href="https://github.com/willemdj/erlsom/blob/master/doc/reference.md#parse_sax"&gt;documentation&lt;/a&gt;, which means that the above code is in Erlang.&lt;/p&gt;
-
-&lt;p&gt;Here&amp;rsquo;s our application in full (this is located in &lt;code&gt;lib/saxy.ex&lt;/code&gt;). You can also take a moment to get a rough idea of how the &lt;code&gt;:erlsom.parse_sax/4&lt;/code&gt; function is used.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Saxy&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;SaxState&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="k"&gt;defstruct&lt;/span&gt; &lt;span class="ss"&gt;title:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;text:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="nv"&gt;@chunk&lt;/span&gt; &lt;span class="mi"&gt;10000&lt;/span&gt; 
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:binary&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-
-    &lt;span class="n"&gt;position&lt;/span&gt;           &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
-    &lt;span class="n"&gt;c_state&lt;/span&gt;            &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;position&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@chunk&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-
-    &lt;span class="ss"&gt;:erlsom&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parse_sax&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                      &lt;span class="no"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                      &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                      &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="ss"&gt;:continuation_function&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;continue_file&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c_state&lt;/span&gt;&lt;span class="p"&gt;}])&lt;/span&gt;
-
-    &lt;span class="ss"&gt;:ok&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;continue_file&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tail&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="ss"&gt;:file&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
-        &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;tail&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;binary&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="n"&gt;binary&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
-      &lt;span class="ss"&gt;:oef&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
-        &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;tail&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
-    &lt;span class="k"&gt;end&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:startElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'title'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;_state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="no"&gt;SaxState&lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:startElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'text'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:characters&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="no"&gt;SaxState&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="n"&gt;element_acc&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;to_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:endElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'title'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;title:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:endElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'text'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;text:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-    &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;"Title: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
-    &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;"Text:  &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
-    &lt;span class="n"&gt;state&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:endDocument&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;
-
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h3&gt;Taking it apart&lt;/h3&gt;
-
-&lt;p&gt;Let&amp;rsquo;s take the program apart. We start with &lt;code&gt;run/1&lt;/code&gt;.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;open&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="ss"&gt;:binary&lt;/span&gt;&lt;span class="p"&gt;])&lt;/span&gt;
-
-  &lt;span class="n"&gt;position&lt;/span&gt;           &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="mi"&gt;0&lt;/span&gt;
-  &lt;span class="n"&gt;c_state&lt;/span&gt;            &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;position&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="nv"&gt;@chunk&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-
-  &lt;span class="ss"&gt;:erlsom&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parse_sax&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                    &lt;span class="no"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                    &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                    &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="ss"&gt;:continuation_function&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;continue_file&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c_state&lt;/span&gt;&lt;span class="p"&gt;}])&lt;/span&gt;
-
-  &lt;span class="ss"&gt;:ok&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="no"&gt;File&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;We open the XML file in &lt;code&gt;:binary&lt;/code&gt; mode. What is returned a tuple containing the &lt;code&gt;:ok&lt;/code&gt; atom and a &lt;em&gt;file handle&lt;/em&gt;. We are not reading the entire file here. You will see exactly how we do that later on.&lt;/p&gt;
-
-&lt;p&gt;The first argument is an empty string, which is basically what you start off with. The second argument we will not use.&lt;/p&gt;
-
-&lt;h4&gt;Continuation Function&lt;/h4&gt;
-
-&lt;p&gt;Let&amp;rsquo;s ignore the third argument for now, and concentrate on the last one:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="ss"&gt;:continuation_function&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;continue_file&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c_state&lt;/span&gt;&lt;span class="p"&gt;}]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;This tells &lt;code&gt;:erlsom.parse_sax/4&lt;/code&gt; to use a &lt;strong&gt;continuation function&lt;/strong&gt;. The continuation function is called each time when &lt;code&gt;:erl.parse_sax/4&lt;/code&gt; needs more data. More data would be needed when &lt;code&gt;:erl.parse_sax/4&lt;/code&gt; is done parsing the current chunk of file – that was provided by the  &lt;em&gt;previous&lt;/em&gt; invocation of the continuation function.&lt;/p&gt;
-
-&lt;p&gt;Notice how we refer to the &lt;code&gt;continue_file&lt;/code&gt; function using the &lt;code&gt;&amp;amp;&lt;/code&gt; and &lt;code&gt;/arity&lt;/code&gt; syntax. &lt;code&gt;c_state&lt;/code&gt; is the tuple that we pass into &lt;code&gt;continue_file&lt;/code&gt;. This tuple contains the XML file &lt;code&gt;handle&lt;/code&gt;, the &lt;code&gt;position&lt;/code&gt; of the file we are going to read from, and finally the &lt;code&gt;@chunk&lt;/code&gt;, which is how much of the file we read each time.&lt;/p&gt;
-
-&lt;p&gt;Let&amp;rsquo;s take a look at the implementation of &lt;code&gt;continue_file&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;continue_file&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;tail&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;})&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="k"&gt;case&lt;/span&gt; &lt;span class="ss"&gt;:file&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;pread&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;:ok&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
-      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="o"&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class="n"&gt;tail&lt;/span&gt; &lt;span class="p"&gt;::&lt;/span&gt; &lt;span class="n"&gt;binary&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;data&lt;/span&gt;&lt;span class="p"&gt;::&lt;/span&gt;&lt;span class="n"&gt;binary&lt;/span&gt;&lt;span class="o"&gt;&amp;gt;&amp;gt;&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt; &lt;span class="o"&gt;+&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
-    &lt;span class="ss"&gt;:oef&lt;/span&gt; &lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;
-      &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;tail&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="n"&gt;handle&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;offset&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;chunk&lt;/span&gt;&lt;span class="p"&gt;}}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The second argument is &lt;code&gt;c_state&lt;/code&gt;. This information is used in &lt;code&gt;:file.pread&lt;/code&gt;, which allows us to read files in &lt;code&gt;chunks&lt;/code&gt; given an &lt;code&gt;offset&lt;/code&gt;. &lt;/p&gt;
-
-&lt;p&gt;So what&amp;rsquo;s &lt;code&gt;tail&lt;/code&gt;? It is a list of characters that the SAX parser couldn&amp;rsquo;t parse during the previous invocation, which could be due to an incomplete token, or some encoding issues. Either way, we will join back the &lt;code&gt;tail&lt;/code&gt; with whatever current data we were reading from.&lt;/p&gt;
-
-&lt;p&gt;Assuming we have more data (&lt;code&gt;:file.pread/3&lt;/code&gt; returns &lt;code&gt;{:ok, data}&lt;/code&gt;, then we return a tuple containing the updated data (the &lt;code&gt;tail&lt;/code&gt; concatenated with the &lt;code&gt;data&lt;/code&gt; read from file), and an updated &lt;code&gt;c_state&lt;/code&gt;, whose offset value has incremented with the chunk size.&lt;/p&gt;
-
-&lt;p&gt;If we hit the end of the file, &lt;code&gt;:eof&lt;/code&gt; will be pattern matched and we return a tuple containing the &lt;code&gt;tail&lt;/code&gt; and the unchanged &lt;code&gt;c_state&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;It&amp;rsquo;s worth taking a step back and review what we have just learnt. The &lt;code&gt;continuation_function&lt;/code&gt; provides a way to read the file in chunks. It also handles incomplete data by combining the previous un-parseable data with the current chunk of data being read.&lt;/p&gt;
-
-&lt;p&gt;Yay, we&amp;rsquo;re done with the hard part.&lt;/p&gt;
-
-&lt;h4&gt;SAX Events&lt;/h4&gt;
-
-&lt;p&gt;Now, we can look into how we can parse the ginormous XML file.&lt;/p&gt;
-
-&lt;p&gt;As a refresher, this is our favorite &lt;code&gt;:erl.parse_sax/4&lt;/code&gt; again:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="ss"&gt;:erlsom&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;parse_sax&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                  &lt;span class="no"&gt;nil&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                  &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; 
-                  &lt;span class="p"&gt;[{&lt;/span&gt;&lt;span class="ss"&gt;:continuation_function&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;continue_file&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;c_state&lt;/span&gt;&lt;span class="p"&gt;}])&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;The third argument defines the function to call when SAX events are triggered. An example of a SAX event is &lt;code&gt;startElement&lt;/code&gt; and &lt;code&gt;endDocument&lt;/code&gt;.&lt;/p&gt;
-
-&lt;p&gt;Here are all the events:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;Saxy&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="k"&gt;defmodule&lt;/span&gt; &lt;span class="no"&gt;SaxState&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="k"&gt;defstruct&lt;/span&gt; &lt;span class="ss"&gt;title:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;text:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="c1"&gt;# Omitted stuff ...&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:startElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'title'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;_state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="no"&gt;SaxState&lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:startElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'text'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:characters&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="no"&gt;SaxState&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="n"&gt;element_acc&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;to_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:endElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'title'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;title:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:endElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'text'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-    &lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;text:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-    &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;"Title: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
-    &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;"Text:  &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
-    &lt;span class="n"&gt;state&lt;/span&gt;
-  &lt;span class="k"&gt;end&lt;/span&gt;
-
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:endDocument&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;
-  &lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Notice how pattern matching comes into play here. We only need to say what kind of tags we are interested in. One look and you can tell only tags that are &lt;code&gt;&amp;lt;title&amp;gt;...&amp;lt;/title&amp;gt;&lt;/code&gt; and &lt;code&gt;&amp;lt;text&amp;gt;...&amp;lt;/text&amp;gt;&lt;/code&gt; are of interest to us.&lt;/p&gt;
-
-&lt;p&gt;All of the &lt;code&gt;sax_event_handler&lt;/code&gt;s return a &lt;code&gt;SaxState&lt;/code&gt;, which is a &lt;code&gt;defstruct&lt;/code&gt; with 3 pieces of information. Let&amp;rsquo;s see how these information is populated. The structure of the Wikipedia XML is as such:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight xml"&gt;&lt;code&gt;&lt;span class="nt"&gt;&amp;lt;mediawiki&lt;/span&gt; &lt;span class="na"&gt;xml:lang=&lt;/span&gt;&lt;span class="s"&gt;"en"&lt;/span&gt;&lt;span class="nt"&gt;&amp;gt;&lt;/span&gt;
-  &lt;span class="nt"&gt;&amp;lt;page&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;title&amp;gt;&lt;/span&gt;Page title&lt;span class="nt"&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;revision&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;text&amp;gt;&lt;/span&gt;A bunch of [[text]] here.&lt;span class="nt"&gt;&amp;lt;/text&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;/revision&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;revision&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;text&amp;gt;&lt;/span&gt;An earlier [[revision]].&lt;span class="nt"&gt;&amp;lt;/text&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;/revision&amp;gt;&lt;/span&gt;
-  &lt;span class="nt"&gt;&amp;lt;/page&amp;gt;&lt;/span&gt;
-  &lt;span class="nt"&gt;&amp;lt;page&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;title&amp;gt;&lt;/span&gt;Talk:Page title&lt;span class="nt"&gt;&amp;lt;/title&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;revision&amp;gt;&lt;/span&gt;
-      &lt;span class="nt"&gt;&amp;lt;text&amp;gt;&lt;/span&gt;WHYD YOU LOCK PAGE??!!! i was editing that jerk&lt;span class="nt"&gt;&amp;lt;/text&amp;gt;&lt;/span&gt;
-    &lt;span class="nt"&gt;&amp;lt;/revision&amp;gt;&lt;/span&gt;
-  &lt;span class="nt"&gt;&amp;lt;/page&amp;gt;&lt;/span&gt;
-&lt;span class="nt"&gt;&amp;lt;/mediawiki&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;I have taken the liberty to remove tags that we don&amp;rsquo;t care about.&lt;/p&gt;
-
-&lt;p&gt;So let&amp;rsquo;s imagine you are a parser, and you only care about &lt;em&gt;contents&lt;/em&gt; &lt;code&gt;&amp;lt;title&amp;gt;...&amp;lt;/title&amp;gt;&lt;/code&gt; and &lt;code&gt;&amp;lt;text&amp;gt;...&amp;lt;/text&amp;gt;&lt;/code&gt;. Along the way, you hit into the first &lt;code&gt;&amp;lt;title&amp;gt;&lt;/code&gt; opening tag. A SAX event is triggered, and only one matches:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:startElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'title'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;_state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="no"&gt;SaxState&lt;/span&gt;&lt;span class="p"&gt;{}&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Here, we only have to initialize a brand new &lt;code&gt;SaxState&lt;/code&gt;. After the initial title tag, everything that follows &lt;em&gt;before&lt;/em&gt; the closing &lt;code&gt;&amp;lt;/title&amp;gt;&lt;/code&gt; tag is well, the title. The event that is triggered is: &lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:characters&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="p"&gt;%&lt;/span&gt;&lt;span class="no"&gt;SaxState&lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="n"&gt;element_acc&lt;/span&gt; &lt;span class="o"&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class="n"&gt;to_string&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;value&lt;/span&gt;&lt;span class="p"&gt;)}&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Here, we are &lt;em&gt;accumulating&lt;/em&gt; all the data that is being triggered by this event and storing the contents into &lt;code&gt;element_acc&lt;/code&gt; of the &lt;code&gt;SaxState&lt;/code&gt;. Notice that we are not explicitly saying that this has to be inside a &lt;code&gt;&amp;lt;title&amp;gt;&lt;/code&gt; or &lt;code&gt;&amp;lt;text&amp;gt;&lt;/code&gt;, as this function is pretty generic.&lt;/p&gt;
-
-&lt;p&gt;At a certain point, you would encounter the &lt;em&gt;closing&lt;/em&gt; tag of &lt;code&gt;&amp;lt;/title&lt;/code&gt;&amp;gt;. No surprise, another SAX event triggers:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:endElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'title'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;title:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Here, we return a &lt;em&gt;new&lt;/em&gt; state containing all the &lt;code&gt;element_acc&lt;/code&gt; that we have accumulated before, and set that as the title. In case you are unfamiliar with the funky syntax, that is just the way &lt;code&gt;defstruct&lt;/code&gt; and Maps is updated. (Note, a &lt;em&gt;new&lt;/em&gt; state is returned, since Elixir&amp;rsquo;s data structures are immutable.)&lt;/p&gt;
-
-&lt;p&gt;So that&amp;rsquo;s that for &lt;code&gt;&amp;lt;title&amp;gt;...&amp;lt;title&amp;gt;&lt;/code&gt;. Sooner or later, you encounter &lt;code&gt;&amp;lt;text&amp;gt;&lt;/code&gt;. This time, return a new state, making sure that &lt;code&gt;element_acc&lt;/code&gt; is an empty string. Again, this is needed because the &lt;code&gt;sax_event_handler&lt;/code&gt; that handles the &lt;code&gt;{:characters, value}&lt;/code&gt; event doesn&amp;rsquo;t know which tag we are currently in, and will happily accumulate &lt;code&gt;element_acc&lt;/code&gt; unless told otherwise.&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:startElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'text'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;element_acc:&lt;/span&gt; &lt;span class="s2"&gt;""&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;Finally, once we have hit the closing tag of &lt;code&gt;&amp;lt;/text&amp;gt;&lt;/code&gt;, we do the same as before and store &lt;code&gt;element_acc&lt;/code&gt;, but this time in &lt;code&gt;text&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;({&lt;/span&gt;&lt;span class="ss"&gt;:endElement&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'text'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;
-  &lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;%{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt; &lt;span class="o"&gt;|&lt;/span&gt; &lt;span class="ss"&gt;text:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;element_acc&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;
-  &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;"Title: &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;title&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
-  &lt;span class="no"&gt;IO&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;puts&lt;/span&gt; &lt;span class="s2"&gt;"Text:  &lt;/span&gt;&lt;span class="si"&gt;#{&lt;/span&gt;&lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;text&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;
-  &lt;span class="n"&gt;state&lt;/span&gt;
-&lt;span class="k"&gt;end&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;That&amp;rsquo;s pretty much it! The remaining 2 event handlers are pretty self explanatory. The last one is just a &amp;ldquo;catch-all&amp;rdquo;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight elixir"&gt;&lt;code&gt;&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="ss"&gt;:endDocument&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;
-&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="n"&gt;sax_event_handler&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;_&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;&lt;span class="p"&gt;),&lt;/span&gt; &lt;span class="k"&gt;do&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;state&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;h2&gt;Running the project&lt;/h2&gt;
-
-&lt;p&gt;To run it, from the project folder:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre class="highlight plaintext"&gt;&lt;code&gt;% iex -S mix
-iex&amp;gt; Saxy.run "path_to_wiki/wiki.xml"
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
-&lt;p&gt;You will see Wikipedia fly by, without getting any out of memory problems. &lt;/p&gt;
-
-&lt;h2&gt;Parting Thoughts&lt;/h2&gt;
-
-&lt;p&gt;Hopefully I&amp;rsquo;ve made some positive contribution to the dearth of information out there. I plan to do more interesting things with Wikipedia, especially since I&amp;rsquo;ve got this XML parsing thing figured out. I had a lot of fun putting this together, and if you are interested, the repository is at &lt;a href="https://github.com/benjamintanweihao/saxy"&gt;GitHub&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;Being able to use Erlang libraries directly from Elixir is so, so nice.&lt;/p&gt;
-
-&lt;p&gt;Special thanks to &lt;a href="https://github.com/jlouis"&gt;Jesper&lt;/a&gt; for helping me figure some of this stuff out.&lt;/p&gt;
-
-&lt;p&gt;Thanks for reading, you are awesome! &amp;lt;3!&lt;/p&gt;
 </content>
   </entry>
 </feed>

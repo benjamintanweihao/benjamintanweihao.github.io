@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="Benjamin Tan Wei Hao">
-    <title>Benjamin Tan's Learnings & Writings</title>
+    <title>Benjamin Tan's Learnings & Writings - Battling the Dreaded Black Screen in VNC</title>
     <link rel="alternate" type="application/atom+xml" title="Atom Feed" href="/blog/feed.xml" />
 
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -61,23 +61,118 @@
 
     <div class="wrapper">
       <section id="top">
+          <div class="text-center">
+  <h1>Battling the Dreaded Black Screen in VNC</h1>
+  <div class="author">Benjamin Tan</div>
+  <time>Sep 23, 2019</time>
+  <ul class="article-tag list-inline">
+      <li><a href="/blog/tags/vnc/">VNC</a></li>
+      <li><a href="/blog/tags/ubuntu/">Ubuntu</a></li>
+      <li><a href="/blog/tags/linux/">Linux</a></li>
+  </ul>
+</div>
+ 
       </section>
 
       <div id="main" role="main">
-        <h1>Archive for
-    2019
-</h1>
+        <p>VNC is an awesome tool. It&rsquo;s super fast (of course, in a local network!), and gets the job done when a plain terminal doesn&rsquo;t cut it. </p>
 
+<p>However, there&rsquo;s nothing more irritating then seeing the dreaded black or grey VNC screen:</p>
+
+<p><img alt="Mfavo" src="https://i.stack.imgur.com/mfAVO.png" /></p>
+
+<p>It is such a productivity suck  and pain in the ass to deal with. I&rsquo;ve had to deal with this for more than one occasion so I&rsquo;m finally writing all the troubleshooting steps so that future me will thank current me.</p>
+
+<p>These steps were tried on Tiger VNC on Ubuntu, but I suspect they would apply to Tight VNC and the like.</p>
+
+<p>These are some steps that might help you to escape the VNC void.</p>
+
+<h3>1: Kill all existing VNC servers first</h3>
+
+<p>First do a <code>vncserver -list</code></p>
+<div class="highlight"><pre class="highlight plaintext"><code>% vncserver -kill :0 # or whatever number was listed before
+</code></pre></div>
+<h3>2: Do not use <code>sudo</code> to launch <code>vncserver</code></h3>
+
+<p>Firstly, do not use <code>sudo</code> to launch <code>vncserver</code>. This creates files in the wrong permissions that would mess up non-<code>sudo</code> sessions.
+* Kill all other VNC servers first</p>
+
+<h3>3. Check file permissions of <code>~/.Xauthority</code></h3>
+
+<p>Check permissions are set to <code>$USER</code> for the following files:</p>
 
 <ul>
-    <li><a href="/blog/2019/09/23/battling-the-dreaded-black-screen-in-vnc/">Battling the Dreaded Black Screen in VNC</a> <span>Sep 23</span></li>
-    <li><a href="/blog/2019/09/22/using-pycharm-ce-in-docker-for-great-good/">Using PyCharm CE in Docker for Great Good!</a> <span>Sep 22</span></li>
+<li><code>~/.Xauthority</code></li>
+<li><code>~/.ICEauthority</code></li>
 </ul>
 
+<h3>4. Is <code>$USER</code> logged in anywhere else?</h3>
+
+<p>Check that <code>$USER</code> is not logged in with the GUI. </p>
+
+<h3>5. Check <code>~/.vnc/xstartup</code></h3>
+
+<p>The following <code>~/.vnc/xstartup</code> works. Find one which is known to work for your system. </p>
+<div class="highlight"><pre class="highlight shell"><code><span class="c">#!/bin/sh</span>
+
+<span class="nb">unset </span>SESSION_MANAGER
+<span class="nb">unset </span>DBUS_SESSION_BUS_ADDRESS
+<span class="nv">OS</span><span class="o">=</span><span class="sb">`</span><span class="nb">uname</span> <span class="nt">-s</span><span class="sb">`</span>
+<span class="k">if</span> <span class="o">[</span> <span class="nv">$OS</span> <span class="o">=</span> <span class="s1">'Linux'</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+  case</span> <span class="s2">"</span><span class="nv">$WINDOWMANAGER</span><span class="s2">"</span> <span class="k">in</span>
+    <span class="k">*</span>gnome<span class="k">*</span><span class="p">)</span>
+      <span class="k">if</span> <span class="o">[</span> <span class="nt">-e</span> /etc/SuSE-release <span class="o">]</span><span class="p">;</span> <span class="k">then
+        </span><span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:/opt/gnome/bin
+        <span class="nb">export </span>PATH
+      <span class="k">fi</span>
+      <span class="p">;;</span>
+  <span class="k">esac</span>
+<span class="k">fi
+if</span> <span class="o">[</span> <span class="nt">-x</span> /etc/X11/xinit/xinitrc <span class="o">]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">exec</span> /etc/X11/xinit/xinitrc
+<span class="k">fi
+if</span> <span class="o">[</span> <span class="nt">-f</span> /etc/X11/xinit/xinitrc <span class="o">]</span><span class="p">;</span> <span class="k">then
+  </span><span class="nb">exec </span>sh /etc/X11/xinit/xinitrc
+<span class="k">fi</span>
+<span class="o">[</span> <span class="nt">-r</span> <span class="nv">$HOME</span>/.Xresources <span class="o">]</span> <span class="o">&amp;&amp;</span> xrdb <span class="nv">$HOME</span>/.Xresources
+xsetroot <span class="nt">-solid</span> grey
+xterm <span class="nt">-geometry</span> 80x24+10+10 <span class="nt">-ls</span> <span class="nt">-title</span> <span class="s2">"</span><span class="nv">$VNCDESKTOP</span><span class="s2"> Desktop"</span> &amp;
+twm &amp;
+</code></pre></div>
+<h3>6. Check <code>~/.xsession-error</code> for clues</h3>
+
+<p>This is my favorite and by far the most useful tip. </p>
+
+<p>Whenever there&rsquo;s something wrong with the X Window system, it gets logged into this <code>~/.xsession-error</code>.</p>
+
+<p>Below are some of the example error messages that helped with troubleshooting:</p>
+
+<ul>
+<li><code>xfce4-session: Unable to access file /home/benjamintan/.ICEauthority: Permission denied</code></li>
+<li><code>/usr/bin/x-session-manager: X server already running on display :2 xfce4-session: Another session manager is already running</code></li>
+</ul>
+
+<h2>Good Luck!</h2>
+
+<p>Hopefully, you&rsquo;ll never have to encounter any VNC problems, but if you stumble upon then, I hope this is of some use to you.</p>
 
       </div>
       
-      
+      <div id="disqus_thread"></div>
+<script type="text/javascript">
+  /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+var disqus_shortname = 'benjamintanslearningswritings'; // required: replace example with your forum shortname
+
+/* * * DON'T EDIT BELOW THIS LINE * * */
+(function() {
+ var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+ dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+ (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+ })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+
+
 
       <div class="spacing"></div>
     </div>
