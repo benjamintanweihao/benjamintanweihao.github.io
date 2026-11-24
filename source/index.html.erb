@@ -1,228 +1,386 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <meta name="author" content="Benjamin Tan Wei Hao">
-  <title>Benjamin Tan Wei Hao</title>
-
-  <%= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" %>
-  <%= stylesheet_link_tag "//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" %>
-  <%= stylesheet_link_tag "styles" %>
-
-  <!-- Custom Fonts -->
-  <link href='https://fonts.googleapis.com/css?family=Ubuntu:700' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Pacifico' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300' rel='stylesheet' type='text/css'>
-
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-  <![endif]-->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Benjamin Tan Wei Hao</title>
+<meta name="description" content="Benjamin Tan Wei Hao: AI engineer, author and speaker in Singapore. Deep RL for systematic trading, ML platforms, and four technical books.">
+<meta name="author" content="Benjamin Tan Wei Hao">
+<meta property="og:title" content="Benjamin Tan Wei Hao">
+<meta property="og:description" content="AI engineer, author and speaker. Deep RL for systematic trading, ML platforms, and four technical books.">
+<meta property="og:image" content="https://benjamintan.io/images/2026/portrait.jpg">
+<meta property="og:url" content="https://benjamintan.io/">
+<link rel="alternate" type="application/atom+xml" title="Blog" href="/feed.xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+img{max-width:100%}
+body{margin:0}
+.site{--ink:#1B2250;--bg:#FBF8F2;--pink:#F6A9C8;--rose:#EE6F8C;--mint:#93DEC6;--sky:#6CC6EE;--lilac:#CDB8F2;--butter:#FFD17E;color:var(--ink);background:var(--bg);font-family:Inter,system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.site a{color:var(--ink);text-decoration-color:var(--rose);text-underline-offset:4px;text-decoration-thickness:3px}
+.site a:hover{text-decoration-color:var(--sky)}
+.site a.plain{text-decoration:none}
+.site a.btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 var(--ink)}
+.site .card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+.site .card{transition:transform .15s,box-shadow .15s}
+.site.noshapes .deco{display:none}
+.site .px{position:absolute;width:6px;height:6px;pointer-events:none;box-shadow:0 0 0 1px #1B2250}
+.site.noshapes .px{display:none}
+@keyframes hop{0%,100%{transform:translateY(0)}40%{transform:translateY(-8px)}70%{transform:translateY(1px)}}
+@keyframes party{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+.site .logo .vx{transform-box:fill-box}
+.site .logo:hover .vx,.site .logo:focus-visible .vx{animation:hop .6s steps(6,end) infinite}
+.site .logo:hover .logo-svg,.site .logo:focus-visible .logo-svg{animation:party 1.2s steps(12,end) infinite}
+@media (prefers-reduced-motion: reduce){.site .logo:hover .vx,.site .logo:hover .logo-svg{animation:none}}
+.site .logo-svg{max-width:100%;height:auto}
+</style>
 </head>
+<body>
+<div class="site" style="min-height: 100vh">
 
-<body id="page-top" class="index">
-  <!-- Navigation -->
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <!-- Brand and toggle get grouped together for better mobile display -->
-      <div class="navbar-header page-scroll">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-        </button>
-      </div>
+<!-- NAV -->
+<header style="border-bottom: 2px solid var(--ink); background: var(--bg)">
+<nav aria-label="Main" style="max-width: 1200px; margin: 0 auto; padding: 18px 32px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+<a class="plain logo" href="#top" aria-label="Benjamin Tan, home" style="display: flex; align-items: center; gap: 12px">
+<span id="logo-box" aria-hidden="true" style="position: relative; display: block; flex: none; max-width: 100%">
+<svg class="logo-svg" aria-hidden="true" width="385" height="53" viewBox="0 0 385 53" shape-rendering="crispEdges" style="display: block; flex: none; overflow: visible"><g stroke="#1B2250" stroke-width="1" stroke-linejoin="miter"><g data-li="0"><rect x="1" y="12" width="25" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.000s"><polygon points="1,44 8,44 12,40 5,40" fill="#FBF8F2"/><polygon points="8,44 12,40 12,47 8,51" fill="#1B2250"/><polygon points="1,44 8,44 8,51 1,51" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.000s"><polygon points="1,37 8,37 12,33 5,33" fill="#FBF8F2"/><polygon points="8,37 12,33 12,40 8,44" fill="#1B2250"/><polygon points="1,37 8,37 8,44 1,44" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.000s"><polygon points="1,30 8,30 12,26 5,26" fill="#FBF8F2"/><polygon points="8,30 12,26 12,33 8,37" fill="#1B2250"/><polygon points="1,30 8,30 8,37 1,37" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.000s"><polygon points="1,23 8,23 12,19 5,19" fill="#FBF8F2"/><polygon points="8,23 12,19 12,26 8,30" fill="#1B2250"/><polygon points="1,23 8,23 8,30 1,30" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.000s"><polygon points="1,16 8,16 12,12 5,12" fill="#FBF8F2"/><polygon points="8,16 12,12 12,19 8,23" fill="#1B2250"/><polygon points="1,16 8,16 8,23 1,23" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.022s"><polygon points="8,44 15,44 19,40 12,40" fill="#FBF8F2"/><polygon points="15,44 19,40 19,47 15,51" fill="#1B2250"/><polygon points="8,44 15,44 15,51 8,51" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.022s"><polygon points="8,30 15,30 19,26 12,26" fill="#FBF8F2"/><polygon points="15,30 19,26 19,33 15,37" fill="#1B2250"/><polygon points="8,30 15,30 15,37 8,37" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.022s"><polygon points="8,16 15,16 19,12 12,12" fill="#FBF8F2"/><polygon points="15,16 19,12 19,19 15,23" fill="#1B2250"/><polygon points="8,16 15,16 15,23 8,23" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.044s"><polygon points="15,37 22,37 26,33 19,33" fill="#FBF8F2"/><polygon points="22,37 26,33 26,40 22,44" fill="#1B2250"/><polygon points="15,37 22,37 22,44 15,44" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.044s"><polygon points="15,23 22,23 26,19 19,19" fill="#FBF8F2"/><polygon points="22,23 26,19 26,26 22,30" fill="#1B2250"/><polygon points="15,23 22,23 22,30 15,30" fill="#F6A9C8"/></g></g><g data-li="1"><rect x="29" y="12" width="25" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.088s"><polygon points="29,44 36,44 40,40 33,40" fill="#FBF8F2"/><polygon points="36,44 40,40 40,47 36,51" fill="#1B2250"/><polygon points="29,44 36,44 36,51 29,51" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.088s"><polygon points="29,37 36,37 40,33 33,33" fill="#FBF8F2"/><polygon points="36,37 40,33 40,40 36,44" fill="#1B2250"/><polygon points="29,37 36,37 36,44 29,44" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.088s"><polygon points="29,30 36,30 40,26 33,26" fill="#FBF8F2"/><polygon points="36,30 40,26 40,33 36,37" fill="#1B2250"/><polygon points="29,30 36,30 36,37 29,37" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.088s"><polygon points="29,23 36,23 40,19 33,19" fill="#FBF8F2"/><polygon points="36,23 40,19 40,26 36,30" fill="#1B2250"/><polygon points="29,23 36,23 36,30 29,30" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.088s"><polygon points="29,16 36,16 40,12 33,12" fill="#FBF8F2"/><polygon points="36,16 40,12 40,19 36,23" fill="#1B2250"/><polygon points="29,16 36,16 36,23 29,23" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.110s"><polygon points="36,44 43,44 47,40 40,40" fill="#FBF8F2"/><polygon points="43,44 47,40 47,47 43,51" fill="#1B2250"/><polygon points="36,44 43,44 43,51 36,51" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.110s"><polygon points="36,30 43,30 47,26 40,26" fill="#FBF8F2"/><polygon points="43,30 47,26 47,33 43,37" fill="#1B2250"/><polygon points="36,30 43,30 43,37 36,37" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.110s"><polygon points="36,16 43,16 47,12 40,12" fill="#FBF8F2"/><polygon points="43,16 47,12 47,19 43,23" fill="#1B2250"/><polygon points="36,16 43,16 43,23 36,23" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.132s"><polygon points="43,44 50,44 54,40 47,40" fill="#FBF8F2"/><polygon points="50,44 54,40 54,47 50,51" fill="#1B2250"/><polygon points="43,44 50,44 50,51 43,51" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.132s"><polygon points="43,16 50,16 54,12 47,12" fill="#FBF8F2"/><polygon points="50,16 54,12 54,19 50,23" fill="#1B2250"/><polygon points="43,16 50,16 50,23 43,23" fill="#93DEC6"/></g></g><g data-li="2"><rect x="57" y="12" width="39" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.176s"><polygon points="57,44 64,44 68,40 61,40" fill="#FBF8F2"/><polygon points="64,44 68,40 68,47 64,51" fill="#1B2250"/><polygon points="57,44 64,44 64,51 57,51" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.176s"><polygon points="57,37 64,37 68,33 61,33" fill="#FBF8F2"/><polygon points="64,37 68,33 68,40 64,44" fill="#1B2250"/><polygon points="57,37 64,37 64,44 57,44" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.176s"><polygon points="57,30 64,30 68,26 61,26" fill="#FBF8F2"/><polygon points="64,30 68,26 68,33 64,37" fill="#1B2250"/><polygon points="57,30 64,30 64,37 57,37" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.176s"><polygon points="57,23 64,23 68,19 61,19" fill="#FBF8F2"/><polygon points="64,23 68,19 68,26 64,30" fill="#1B2250"/><polygon points="57,23 64,23 64,30 57,30" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.176s"><polygon points="57,16 64,16 68,12 61,12" fill="#FBF8F2"/><polygon points="64,16 68,12 68,19 64,23" fill="#1B2250"/><polygon points="57,16 64,16 64,23 57,23" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.198s"><polygon points="64,23 71,23 75,19 68,19" fill="#FBF8F2"/><polygon points="71,23 75,19 75,26 71,30" fill="#1B2250"/><polygon points="64,23 71,23 71,30 64,30" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.220s"><polygon points="71,30 78,30 82,26 75,26" fill="#FBF8F2"/><polygon points="78,30 82,26 82,33 78,37" fill="#1B2250"/><polygon points="71,30 78,30 78,37 71,37" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.242s"><polygon points="78,37 85,37 89,33 82,33" fill="#FBF8F2"/><polygon points="85,37 89,33 89,40 85,44" fill="#1B2250"/><polygon points="78,37 85,37 85,44 78,44" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.264s"><polygon points="85,44 92,44 96,40 89,40" fill="#FBF8F2"/><polygon points="92,44 96,40 96,47 92,51" fill="#1B2250"/><polygon points="85,44 92,44 92,51 85,51" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.264s"><polygon points="85,37 92,37 96,33 89,33" fill="#FBF8F2"/><polygon points="92,37 96,33 96,40 92,44" fill="#1B2250"/><polygon points="85,37 92,37 92,44 85,44" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.264s"><polygon points="85,30 92,30 96,26 89,26" fill="#FBF8F2"/><polygon points="92,30 96,26 96,33 92,37" fill="#1B2250"/><polygon points="85,30 92,30 92,37 85,37" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.264s"><polygon points="85,23 92,23 96,19 89,19" fill="#FBF8F2"/><polygon points="92,23 96,19 96,26 92,30" fill="#1B2250"/><polygon points="85,23 92,23 92,30 85,30" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.264s"><polygon points="85,16 92,16 96,12 89,12" fill="#FBF8F2"/><polygon points="92,16 96,12 96,19 92,23" fill="#1B2250"/><polygon points="85,16 92,16 92,23 85,23" fill="#6CC6EE"/></g></g><g data-li="3"><rect x="99" y="12" width="25" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.308s"><polygon points="99,37 106,37 110,33 103,33" fill="#FBF8F2"/><polygon points="106,37 110,33 110,40 106,44" fill="#1B2250"/><polygon points="99,37 106,37 106,44 99,44" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 0.330s"><polygon points="106,44 113,44 117,40 110,40" fill="#FBF8F2"/><polygon points="113,44 117,40 117,47 113,51" fill="#1B2250"/><polygon points="106,44 113,44 113,51 106,51" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 0.352s"><polygon points="113,37 120,37 124,33 117,33" fill="#FBF8F2"/><polygon points="120,37 124,33 124,40 120,44" fill="#1B2250"/><polygon points="113,37 120,37 120,44 113,44" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 0.352s"><polygon points="113,30 120,30 124,26 117,26" fill="#FBF8F2"/><polygon points="120,30 124,26 124,33 120,37" fill="#1B2250"/><polygon points="113,30 120,30 120,37 113,37" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 0.352s"><polygon points="113,23 120,23 124,19 117,19" fill="#FBF8F2"/><polygon points="120,23 124,19 124,26 120,30" fill="#1B2250"/><polygon points="113,23 120,23 120,30 113,30" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 0.352s"><polygon points="113,16 120,16 124,12 117,12" fill="#FBF8F2"/><polygon points="120,16 124,12 124,19 120,23" fill="#1B2250"/><polygon points="113,16 120,16 120,23 113,23" fill="#CDB8F2"/></g></g><g data-li="4"><rect x="127" y="12" width="25" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.396s"><polygon points="127,44 134,44 138,40 131,40" fill="#FBF8F2"/><polygon points="134,44 138,40 138,47 134,51" fill="#1B2250"/><polygon points="127,44 134,44 134,51 127,51" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.396s"><polygon points="127,37 134,37 138,33 131,33" fill="#FBF8F2"/><polygon points="134,37 138,33 138,40 134,44" fill="#1B2250"/><polygon points="127,37 134,37 134,44 127,44" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.396s"><polygon points="127,30 134,30 138,26 131,26" fill="#FBF8F2"/><polygon points="134,30 138,26 138,33 134,37" fill="#1B2250"/><polygon points="127,30 134,30 134,37 127,37" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.396s"><polygon points="127,23 134,23 138,19 131,19" fill="#FBF8F2"/><polygon points="134,23 138,19 138,26 134,30" fill="#1B2250"/><polygon points="127,23 134,23 134,30 127,30" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.418s"><polygon points="134,30 141,30 145,26 138,26" fill="#FBF8F2"/><polygon points="141,30 145,26 145,33 141,37" fill="#1B2250"/><polygon points="134,30 141,30 141,37 134,37" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.418s"><polygon points="134,16 141,16 145,12 138,12" fill="#FBF8F2"/><polygon points="141,16 145,12 145,19 141,23" fill="#1B2250"/><polygon points="134,16 141,16 141,23 134,23" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.440s"><polygon points="141,44 148,44 152,40 145,40" fill="#FBF8F2"/><polygon points="148,44 152,40 152,47 148,51" fill="#1B2250"/><polygon points="141,44 148,44 148,51 141,51" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.440s"><polygon points="141,37 148,37 152,33 145,33" fill="#FBF8F2"/><polygon points="148,37 152,33 152,40 148,44" fill="#1B2250"/><polygon points="141,37 148,37 148,44 141,44" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.440s"><polygon points="141,30 148,30 152,26 145,26" fill="#FBF8F2"/><polygon points="148,30 152,26 152,33 148,37" fill="#1B2250"/><polygon points="141,30 148,30 148,37 141,37" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 0.440s"><polygon points="141,23 148,23 152,19 145,19" fill="#FBF8F2"/><polygon points="148,23 152,19 152,26 148,30" fill="#1B2250"/><polygon points="141,23 148,23 148,30 141,30" fill="#FFD17E"/></g></g><g data-li="5"><rect x="155" y="12" width="39" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.484s"><polygon points="155,44 162,44 166,40 159,40" fill="#FBF8F2"/><polygon points="162,44 166,40 166,47 162,51" fill="#1B2250"/><polygon points="155,44 162,44 162,51 155,51" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.484s"><polygon points="155,37 162,37 166,33 159,33" fill="#FBF8F2"/><polygon points="162,37 166,33 166,40 162,44" fill="#1B2250"/><polygon points="155,37 162,37 162,44 155,44" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.484s"><polygon points="155,30 162,30 166,26 159,26" fill="#FBF8F2"/><polygon points="162,30 166,26 166,33 162,37" fill="#1B2250"/><polygon points="155,30 162,30 162,37 155,37" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.484s"><polygon points="155,23 162,23 166,19 159,19" fill="#FBF8F2"/><polygon points="162,23 166,19 166,26 162,30" fill="#1B2250"/><polygon points="155,23 162,23 162,30 155,30" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.484s"><polygon points="155,16 162,16 166,12 159,12" fill="#FBF8F2"/><polygon points="162,16 166,12 166,19 162,23" fill="#1B2250"/><polygon points="155,16 162,16 162,23 155,23" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.506s"><polygon points="162,23 169,23 173,19 166,19" fill="#FBF8F2"/><polygon points="169,23 173,19 173,26 169,30" fill="#1B2250"/><polygon points="162,23 169,23 169,30 162,30" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.528s"><polygon points="169,30 176,30 180,26 173,26" fill="#FBF8F2"/><polygon points="176,30 180,26 180,33 176,37" fill="#1B2250"/><polygon points="169,30 176,30 176,37 169,37" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.550s"><polygon points="176,23 183,23 187,19 180,19" fill="#FBF8F2"/><polygon points="183,23 187,19 187,26 183,30" fill="#1B2250"/><polygon points="176,23 183,23 183,30 176,30" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.572s"><polygon points="183,44 190,44 194,40 187,40" fill="#FBF8F2"/><polygon points="190,44 194,40 194,47 190,51" fill="#1B2250"/><polygon points="183,44 190,44 190,51 183,51" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.572s"><polygon points="183,37 190,37 194,33 187,33" fill="#FBF8F2"/><polygon points="190,37 194,33 194,40 190,44" fill="#1B2250"/><polygon points="183,37 190,37 190,44 183,44" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.572s"><polygon points="183,30 190,30 194,26 187,26" fill="#FBF8F2"/><polygon points="190,30 194,26 194,33 190,37" fill="#1B2250"/><polygon points="183,30 190,30 190,37 183,37" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.572s"><polygon points="183,23 190,23 194,19 187,19" fill="#FBF8F2"/><polygon points="190,23 194,19 194,26 190,30" fill="#1B2250"/><polygon points="183,23 190,23 190,30 183,30" fill="#EE6F8C"/></g><g class="vx" style="animation-delay: 0.572s"><polygon points="183,16 190,16 194,12 187,12" fill="#FBF8F2"/><polygon points="190,16 194,12 194,19 190,23" fill="#1B2250"/><polygon points="183,16 190,16 190,23 183,23" fill="#EE6F8C"/></g></g><g data-li="6"><rect x="197" y="12" width="25" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.616s"><polygon points="197,44 204,44 208,40 201,40" fill="#FBF8F2"/><polygon points="204,44 208,40 208,47 204,51" fill="#1B2250"/><polygon points="197,44 204,44 204,51 197,51" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.616s"><polygon points="197,16 204,16 208,12 201,12" fill="#FBF8F2"/><polygon points="204,16 208,12 208,19 204,23" fill="#1B2250"/><polygon points="197,16 204,16 204,23 197,23" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.638s"><polygon points="204,44 211,44 215,40 208,40" fill="#FBF8F2"/><polygon points="211,44 215,40 215,47 211,51" fill="#1B2250"/><polygon points="204,44 211,44 211,51 204,51" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.638s"><polygon points="204,37 211,37 215,33 208,33" fill="#FBF8F2"/><polygon points="211,37 215,33 215,40 211,44" fill="#1B2250"/><polygon points="204,37 211,37 211,44 204,44" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.638s"><polygon points="204,30 211,30 215,26 208,26" fill="#FBF8F2"/><polygon points="211,30 215,26 215,33 211,37" fill="#1B2250"/><polygon points="204,30 211,30 211,37 204,37" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.638s"><polygon points="204,23 211,23 215,19 208,19" fill="#FBF8F2"/><polygon points="211,23 215,19 215,26 211,30" fill="#1B2250"/><polygon points="204,23 211,23 211,30 204,30" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.638s"><polygon points="204,16 211,16 215,12 208,12" fill="#FBF8F2"/><polygon points="211,16 215,12 215,19 211,23" fill="#1B2250"/><polygon points="204,16 211,16 211,23 204,23" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.660s"><polygon points="211,44 218,44 222,40 215,40" fill="#FBF8F2"/><polygon points="218,44 222,40 222,47 218,51" fill="#1B2250"/><polygon points="211,44 218,44 218,51 211,51" fill="#F6A9C8"/></g><g class="vx" style="animation-delay: 0.660s"><polygon points="211,16 218,16 222,12 215,12" fill="#FBF8F2"/><polygon points="218,16 222,12 222,19 218,23" fill="#1B2250"/><polygon points="211,16 218,16 218,23 211,23" fill="#F6A9C8"/></g></g><g data-li="7"><rect x="225" y="12" width="39" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.704s"><polygon points="225,44 232,44 236,40 229,40" fill="#FBF8F2"/><polygon points="232,44 236,40 236,47 232,51" fill="#1B2250"/><polygon points="225,44 232,44 232,51 225,51" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.704s"><polygon points="225,37 232,37 236,33 229,33" fill="#FBF8F2"/><polygon points="232,37 236,33 236,40 232,44" fill="#1B2250"/><polygon points="225,37 232,37 232,44 225,44" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.704s"><polygon points="225,30 232,30 236,26 229,26" fill="#FBF8F2"/><polygon points="232,30 236,26 236,33 232,37" fill="#1B2250"/><polygon points="225,30 232,30 232,37 225,37" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.704s"><polygon points="225,23 232,23 236,19 229,19" fill="#FBF8F2"/><polygon points="232,23 236,19 236,26 232,30" fill="#1B2250"/><polygon points="225,23 232,23 232,30 225,30" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.704s"><polygon points="225,16 232,16 236,12 229,12" fill="#FBF8F2"/><polygon points="232,16 236,12 236,19 232,23" fill="#1B2250"/><polygon points="225,16 232,16 232,23 225,23" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.726s"><polygon points="232,23 239,23 243,19 236,19" fill="#FBF8F2"/><polygon points="239,23 243,19 243,26 239,30" fill="#1B2250"/><polygon points="232,23 239,23 239,30 232,30" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.748s"><polygon points="239,30 246,30 250,26 243,26" fill="#FBF8F2"/><polygon points="246,30 250,26 250,33 246,37" fill="#1B2250"/><polygon points="239,30 246,30 246,37 239,37" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.770s"><polygon points="246,37 253,37 257,33 250,33" fill="#FBF8F2"/><polygon points="253,37 257,33 257,40 253,44" fill="#1B2250"/><polygon points="246,37 253,37 253,44 246,44" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.792s"><polygon points="253,44 260,44 264,40 257,40" fill="#FBF8F2"/><polygon points="260,44 264,40 264,47 260,51" fill="#1B2250"/><polygon points="253,44 260,44 260,51 253,51" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.792s"><polygon points="253,37 260,37 264,33 257,33" fill="#FBF8F2"/><polygon points="260,37 264,33 264,40 260,44" fill="#1B2250"/><polygon points="253,37 260,37 260,44 253,44" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.792s"><polygon points="253,30 260,30 264,26 257,26" fill="#FBF8F2"/><polygon points="260,30 264,26 264,33 260,37" fill="#1B2250"/><polygon points="253,30 260,30 260,37 253,37" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.792s"><polygon points="253,23 260,23 264,19 257,19" fill="#FBF8F2"/><polygon points="260,23 264,19 264,26 260,30" fill="#1B2250"/><polygon points="253,23 260,23 260,30 253,30" fill="#93DEC6"/></g><g class="vx" style="animation-delay: 0.792s"><polygon points="253,16 260,16 264,12 257,12" fill="#FBF8F2"/><polygon points="260,16 264,12 264,19 260,23" fill="#1B2250"/><polygon points="253,16 260,16 260,23 253,23" fill="#93DEC6"/></g></g><g data-li="8"><rect x="288" y="12" width="25" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.902s"><polygon points="288,16 295,16 299,12 292,12" fill="#FBF8F2"/><polygon points="295,16 299,12 299,19 295,23" fill="#1B2250"/><polygon points="288,16 295,16 295,23 288,23" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.924s"><polygon points="295,44 302,44 306,40 299,40" fill="#FBF8F2"/><polygon points="302,44 306,40 306,47 302,51" fill="#1B2250"/><polygon points="295,44 302,44 302,51 295,51" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.924s"><polygon points="295,37 302,37 306,33 299,33" fill="#FBF8F2"/><polygon points="302,37 306,33 306,40 302,44" fill="#1B2250"/><polygon points="295,37 302,37 302,44 295,44" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.924s"><polygon points="295,30 302,30 306,26 299,26" fill="#FBF8F2"/><polygon points="302,30 306,26 306,33 302,37" fill="#1B2250"/><polygon points="295,30 302,30 302,37 295,37" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.924s"><polygon points="295,23 302,23 306,19 299,19" fill="#FBF8F2"/><polygon points="302,23 306,19 306,26 302,30" fill="#1B2250"/><polygon points="295,23 302,23 302,30 295,30" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.924s"><polygon points="295,16 302,16 306,12 299,12" fill="#FBF8F2"/><polygon points="302,16 306,12 306,19 302,23" fill="#1B2250"/><polygon points="295,16 302,16 302,23 295,23" fill="#6CC6EE"/></g><g class="vx" style="animation-delay: 0.946s"><polygon points="302,16 309,16 313,12 306,12" fill="#FBF8F2"/><polygon points="309,16 313,12 313,19 309,23" fill="#1B2250"/><polygon points="302,16 309,16 309,23 302,23" fill="#6CC6EE"/></g></g><g data-li="9"><rect x="316" y="12" width="25" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 0.990s"><polygon points="316,44 323,44 327,40 320,40" fill="#FBF8F2"/><polygon points="323,44 327,40 327,47 323,51" fill="#1B2250"/><polygon points="316,44 323,44 323,51 316,51" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 0.990s"><polygon points="316,37 323,37 327,33 320,33" fill="#FBF8F2"/><polygon points="323,37 327,33 327,40 323,44" fill="#1B2250"/><polygon points="316,37 323,37 323,44 316,44" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 0.990s"><polygon points="316,30 323,30 327,26 320,26" fill="#FBF8F2"/><polygon points="323,30 327,26 327,33 323,37" fill="#1B2250"/><polygon points="316,30 323,30 323,37 316,37" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 0.990s"><polygon points="316,23 323,23 327,19 320,19" fill="#FBF8F2"/><polygon points="323,23 327,19 327,26 323,30" fill="#1B2250"/><polygon points="316,23 323,23 323,30 316,30" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 1.012s"><polygon points="323,30 330,30 334,26 327,26" fill="#FBF8F2"/><polygon points="330,30 334,26 334,33 330,37" fill="#1B2250"/><polygon points="323,30 330,30 330,37 323,37" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 1.012s"><polygon points="323,16 330,16 334,12 327,12" fill="#FBF8F2"/><polygon points="330,16 334,12 334,19 330,23" fill="#1B2250"/><polygon points="323,16 330,16 330,23 323,23" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 1.034s"><polygon points="330,44 337,44 341,40 334,40" fill="#FBF8F2"/><polygon points="337,44 341,40 341,47 337,51" fill="#1B2250"/><polygon points="330,44 337,44 337,51 330,51" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 1.034s"><polygon points="330,37 337,37 341,33 334,33" fill="#FBF8F2"/><polygon points="337,37 341,33 341,40 337,44" fill="#1B2250"/><polygon points="330,37 337,37 337,44 330,44" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 1.034s"><polygon points="330,30 337,30 341,26 334,26" fill="#FBF8F2"/><polygon points="337,30 341,26 341,33 337,37" fill="#1B2250"/><polygon points="330,30 337,30 337,37 330,37" fill="#CDB8F2"/></g><g class="vx" style="animation-delay: 1.034s"><polygon points="330,23 337,23 341,19 334,19" fill="#FBF8F2"/><polygon points="337,23 341,19 341,26 337,30" fill="#1B2250"/><polygon points="330,23 337,23 337,30 330,30" fill="#CDB8F2"/></g></g><g data-li="10"><rect x="344" y="12" width="39" height="39" fill="#000" fill-opacity="0" stroke="none"/><g class="vx" style="animation-delay: 1.078s"><polygon points="344,44 351,44 355,40 348,40" fill="#FBF8F2"/><polygon points="351,44 355,40 355,47 351,51" fill="#1B2250"/><polygon points="344,44 351,44 351,51 344,51" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.078s"><polygon points="344,37 351,37 355,33 348,33" fill="#FBF8F2"/><polygon points="351,37 355,33 355,40 351,44" fill="#1B2250"/><polygon points="344,37 351,37 351,44 344,44" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.078s"><polygon points="344,30 351,30 355,26 348,26" fill="#FBF8F2"/><polygon points="351,30 355,26 355,33 351,37" fill="#1B2250"/><polygon points="344,30 351,30 351,37 344,37" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.078s"><polygon points="344,23 351,23 355,19 348,19" fill="#FBF8F2"/><polygon points="351,23 355,19 355,26 351,30" fill="#1B2250"/><polygon points="344,23 351,23 351,30 344,30" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.078s"><polygon points="344,16 351,16 355,12 348,12" fill="#FBF8F2"/><polygon points="351,16 355,12 355,19 351,23" fill="#1B2250"/><polygon points="344,16 351,16 351,23 344,23" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.100s"><polygon points="351,23 358,23 362,19 355,19" fill="#FBF8F2"/><polygon points="358,23 362,19 362,26 358,30" fill="#1B2250"/><polygon points="351,23 358,23 358,30 351,30" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.122s"><polygon points="358,30 365,30 369,26 362,26" fill="#FBF8F2"/><polygon points="365,30 369,26 369,33 365,37" fill="#1B2250"/><polygon points="358,30 365,30 365,37 358,37" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.144s"><polygon points="365,37 372,37 376,33 369,33" fill="#FBF8F2"/><polygon points="372,37 376,33 376,40 372,44" fill="#1B2250"/><polygon points="365,37 372,37 372,44 365,44" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.166s"><polygon points="372,44 379,44 383,40 376,40" fill="#FBF8F2"/><polygon points="379,44 383,40 383,47 379,51" fill="#1B2250"/><polygon points="372,44 379,44 379,51 372,51" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.166s"><polygon points="372,37 379,37 383,33 376,33" fill="#FBF8F2"/><polygon points="379,37 383,33 383,40 379,44" fill="#1B2250"/><polygon points="372,37 379,37 379,44 372,44" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.166s"><polygon points="372,30 379,30 383,26 376,26" fill="#FBF8F2"/><polygon points="379,30 383,26 383,33 379,37" fill="#1B2250"/><polygon points="372,30 379,30 379,37 372,37" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.166s"><polygon points="372,23 379,23 383,19 376,19" fill="#FBF8F2"/><polygon points="379,23 383,19 383,26 379,30" fill="#1B2250"/><polygon points="372,23 379,23 379,30 372,30" fill="#FFD17E"/></g><g class="vx" style="animation-delay: 1.166s"><polygon points="372,16 379,16 383,12 376,12" fill="#FBF8F2"/><polygon points="379,16 383,12 383,19 379,23" fill="#1B2250"/><polygon points="372,16 379,16 379,23 372,23" fill="#FFD17E"/></g></g></g></svg>
 
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <%= link_to "Blog", "/blog", class: "color1" %>
-          </li>
-          <% %w(books articles speaking code).each_with_index do |section, i| %>
-            <% content_tag :li do %>
-              <%= link_to section.capitalize, "##{section}", class: "page-scroll color#{i+2}" %>
-            <% end %>
-          <% end %>
-        </ul>
-      </div> <!-- /.navbar-collapse -->
-    </div> <!-- /.container -->
-  </nav>
+</span>
+</a>
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 4px 26px; font-size: 15px; font-weight: 500">
+<a class="plain" href="#work" style="padding: 12px 0">Work</a>
+<a class="plain" href="#books" style="padding: 12px 0">Books</a>
+<a class="plain" href="#knowledge" style="padding: 12px 0">Knowledge</a>
+<a class="plain" href="#talks" style="padding: 12px 0">Talks</a>
+<a class="plain" href="/blog" style="padding: 12px 0">Blog</a>
+<a class="plain btn" href="#contact" style="padding: 10px 18px; background: var(--butter); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); font-weight: 600">Say hello</a>
+</div>
+</nav>
+</header>
 
-  <!-- Rainbow Bar -->
-  <div class="top-bar"></div>
+<main id="top">
 
-  <!-- Header -->
-  <header id="top">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <h2 class="greeting color4">Ohai! I'm</h2>
-          <h1 class="color2">Benjamin Tan</h1>
-          <h2 class="subheader">Software Engineer / Author / Speaker</h2>
-          <ul class="list-inline social-btns">
-            <li><a href="mailto:benjamintanweihao@gmail.com"><i class="fa fa-envelope-o color1"></i></a></li>
-            <li><a href="https://twitter.com/bentanweihao" target=_blank><i class="fa fa-twitter color2"></i></a></li>
-            <li><a href="#books" class="page-scroll"><i class="fa fa-angle-double-down color3"></i></a></li>
-            <li><a href="https://sg.linkedin.com/in/benjamintanwh" target=_blank><i class="fa fa-linkedin color4"></i></a></li>
-            <li><a href="https://github.com/benjamintanweihao" target=_blank><i class="fa fa-github color5"></i></a></li>
-          </ul>
-        </div>
-      </div>
-      <div class="spacing"></div>
-    </div>
-  </header>
+<!-- HERO -->
+<section style="max-width: 1200px; margin: 0 auto; padding: 80px 32px 88px; display: flex; flex-wrap: wrap; gap: 64px; align-items: center">
+<div style="flex: 999 1 540px; min-width: 0; display: flex; flex-direction: column; gap: 26px">
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 6px 12px; background: var(--mint); border: 2px solid var(--ink)">AI ENGINEER</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 6px 12px; background: var(--pink); border: 2px solid var(--ink)">AUTHOR</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 6px 12px; background: var(--lilac); border: 2px solid var(--ink)">SPEAKER</span>
+<span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 6px 12px; background: var(--bg); border: 2px solid var(--ink)">SINGAPORE</span>
+</div>
+<h1 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2.6rem, 5.4vw, 4.6rem); line-height: 1.02; letter-spacing: -0.035em">Ohai! I build learning systems that make decisions under uncertainty.</h1>
+<p style="margin: 0; max-width: 620px; font-size: 19px; line-height: 1.6">Right now that's deep reinforcement learning for systematic trading. Before that: a digital bank's GenAI and ML platform built from zero, MLOps for autonomous vehicles, and four technical books along the way.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 16px; padding-top: 6px">
+<a class="plain btn" href="#books" style="padding: 14px 22px; background: var(--ink); color: var(--bg); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--rose); font-weight: 600; font-size: 16px">Read the books</a>
+<a class="plain btn" href="#work" style="padding: 14px 22px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); font-weight: 600; font-size: 16px">See my work</a>
+</div>
+</div>
+<div style="flex: 1 1 340px; min-width: 0; display: flex; justify-content: center">
+<div style="position: relative; width: 100%; max-width: 400px; aspect-ratio: 1 / 1">
+<div class="deco" aria-hidden="true" style="position: absolute; top: -22px; right: -22px; width: 46%; aspect-ratio: 1 / 1; border-radius: 50%; background: var(--butter); border: 2px solid var(--ink)"></div>
+<div class="deco" aria-hidden="true" style="position: absolute; bottom: -24px; left: -24px; width: 52%; height: 38%; background: var(--sky); border: 2px solid var(--ink)"></div>
+<div class="deco" aria-hidden="true" style="position: absolute; top: 18%; left: -36px; width: 52px; height: 52px; background: var(--rose); border: 2px solid var(--ink); transform: rotate(45deg)"></div>
+<div style="position: absolute; inset: 0; border: 2px solid var(--ink); background: var(--lilac); box-shadow: 10px 10px 0 var(--ink); overflow: hidden">
+<img src="/images/2026/portrait.jpg" alt="Benjamin Tan smiling, wearing a colourful geometric-print t-shirt" style="width: 100%; height: 100%; object-fit: cover; display: block">
+</div>
+</div>
+</div>
+</section>
 
-  <!-- Books -->
-  <section id="books">
-    <div class="container">
-      <div class="spacing"></div>
-      <div class="row">
-        <div class="col-md-6 text-center">
-          <img src="../images/writing/exotpbook.jpg"/>
-          <br/>
-          <a href="https://www.manning.com/tanweihao?a_aid=exotpbook&a_bid=99f537ec" class="btn" target=_blank><i class="fa fa-2x fa-flask"></i> Go To Book Site</a>
-        </div>  
+<!-- PROOF STRIP -->
+<section aria-label="Highlights" style="border-top: 2px solid var(--ink); border-bottom: 2px solid var(--ink)">
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr))">
+<div style="padding: 30px 32px; background: var(--pink); border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 38px; font-weight: 700; letter-spacing: -0.02em">4 books</span><span style="font-size: 15px">Manning, Pragmatic, and a Korean edition</span></div>
+<div style="padding: 30px 32px; background: var(--mint); border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 38px; font-weight: 700; letter-spacing: -0.02em">8,400+</span><span style="font-size: 15px">copies and course seats sold</span></div>
+<div style="padding: 30px 32px; background: var(--butter); border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 38px; font-weight: 700; letter-spacing: -0.02em">107 PRs</span><span style="font-size: 15px">merged into 53 open-source projects</span></div>
+<div style="padding: 30px 32px; background: var(--sky); display: flex; flex-direction: column; gap: 6px"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 38px; font-weight: 700; letter-spacing: -0.02em">3 continents</span><span style="font-size: 15px">of conference talks, Stockholm to San Diego</span></div>
+</div>
+</section>
 
-        <div class="col-md-6">
-          <h2 class="text-center">The Little Elixir & OTP Guidebook</h2>
+<!-- WORK -->
+<section id="work" style="max-width: 1200px; margin: 0 auto; padding: 112px 32px 32px; display: flex; flex-wrap: wrap; gap: 48px">
+<div style="flex: 1 1 280px; min-width: 0; display: flex; flex-direction: column; gap: 14px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 10px; background: var(--mint); border: 2px solid var(--ink)">01 / EXPERIENCE</span>
+<h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 42px; line-height: 1.08; letter-spacing: -0.025em">From web apps to robots to markets.</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.6">One thread runs through it: taking models out of notebooks and making them do real work.</p>
+</div>
+<ol style="flex: 999 1 560px; min-width: 0; list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 20px">
+<li class="card" style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); display: flex; flex-wrap: wrap">
+<div style="flex: 1 1 220px; padding: 24px; background: var(--lilac); border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 13px">2025 — now</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Systematic trading</span><span style="font-size: 15px">Staff AI Engineer</span></div>
+<p style="flex: 999 1 320px; margin: 0; padding: 24px; font-size: 16px; line-height: 1.6">Deep-RL ensemble models for crypto perpetual futures, plus the infrastructure, exchange integrations and research tooling around them.</p>
+</li>
+<li class="card" style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); display: flex; flex-wrap: wrap">
+<div style="flex: 1 1 220px; padding: 24px; background: var(--pink); border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 13px">2021 — 2025</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Bank Jago · DKatalis</span><span style="font-size: 15px">Principal Engineer &amp; Senior PM</span></div>
+<div style="flex: 999 1 320px; padding: 24px; display: flex; flex-direction: column; gap: 14px">
+<p style="margin: 0; font-size: 16px; line-height: 1.6">Joined as the first ML Engineer and founded the function. Wrote the winning proposal for a S$1.5M innovation grant for AI banking. Then led the bank's first GenAI work: a conversational banking platform (LangGraph, hybrid RAG, tool-calling), six AI product lines across risk, lending and compliance, and two tools that won Indonesia Regulatory Compliance Awards.</p>
+</div>
+</li>
+<li class="card" style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); display: flex; flex-wrap: wrap">
+<div style="flex: 1 1 220px; padding: 24px; background: var(--mint); border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 13px">2017 — 2021</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">EasyMile</span><span style="font-size: 15px">Deep Learning Software Engineer</span></div>
+<p style="flex: 999 1 320px; margin: 0; padding: 24px; font-size: 16px; line-height: 1.6">MLOps for autonomous vehicles: on-prem Kubernetes with Kubeflow pipelines, DVC data versioning, and an annotation platform serving 1,000+ labellers.</p>
+</li>
+<li class="card" style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); display: flex; flex-wrap: wrap">
+<div style="flex: 1 1 220px; padding: 24px; background: var(--butter); border-right: 2px solid var(--ink); display: flex; flex-direction: column; gap: 4px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 13px">2014 — 2017</span><span style="font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Pivotal Labs · Neo</span><span style="font-size: 15px">Software Engineer</span></div>
+<p style="flex: 999 1 320px; margin: 0; padding: 24px; font-size: 16px; line-height: 1.6">TDD and pair programming with Samsung, Ford and startups, across Rails, Scala trading systems, iOS and Android. Led the mySamsung Android team.</p>
+</li>
+<li style="padding: 8px 0 0; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 32px; font-size: 15px">
+<span>B.Comp (Computer Science), National University of Singapore</span>
+<span>MSE, Technopreneurship, Stanford University</span>
+</li>
+</ol>
+</section>
 
-            <p><strong>Note:</strong> The book is out on sale at
-            <a href="https://www.manning.com/tanweihao?a_aid=exotpbook&a_bid=99f537ec" target=_blank>Manning Publications</a>!</p>
+<!-- BOOKS -->
+<section id="books" style="max-width: 1200px; margin: 0 auto; padding: 112px 32px 32px; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 14px; max-width: 640px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 10px; background: var(--pink); border: 2px solid var(--ink)">02 / BOOKS</span>
+<h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 42px; line-height: 1.08; letter-spacing: -0.025em">I write the book I wished I'd had.</h2>
+</div>
+<p style="margin: 0; max-width: 380px; font-size: 16px; line-height: 1.6">Each one started as a gap in my own understanding, written from the beginner's side.</p>
+</div>
 
-            <p>
-              In this guidebook, I will show you how to build programs using <a href="http://www.elixir-lang.org" target=_blank>Elixir</a> and OTP. 
-            </p>
+<article style="background: var(--sky); border: 2px solid var(--ink); box-shadow: 10px 10px 0 var(--ink); display: flex; flex-wrap: wrap; gap: 48px; padding: 48px; align-items: center; position: relative; overflow: hidden">
+<div class="deco" aria-hidden="true" style="position: absolute; right: -60px; bottom: -60px; width: 220px; height: 220px; border-radius: 50%; background: var(--butter); border: 2px solid var(--ink)"></div>
+<img loading="lazy" src="/images/2026/ml-platform-engineering.jpg" alt="Cover of Machine Learning Platform Engineering" style="flex: 0 0 240px; width: 240px; height: auto; display: block; border: 2px solid var(--ink); box-shadow: 8px 8px 0 var(--rose); position: relative">
+<div style="flex: 999 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 18px; position: relative">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 10px; background: var(--butter); border: 2px solid var(--ink)">NEW · MANNING · 2026</span>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 36px; line-height: 1.08; letter-spacing: -0.02em">Machine Learning Platform Engineering</h3>
+<p style="margin: 0; font-size: 17px; line-height: 1.6">Build an internal developer platform for ML and AI systems, layer by layer, so models survive the trip from notebook to production. Co-written with Shanoop Padmanabhan and Varun Mallya.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; padding-top: 6px">
+<a class="plain btn" href="https://www.manning.com/books/machine-learning-platform-engineering" style="padding: 13px 20px; background: var(--ink); color: var(--bg); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--bg); font-weight: 600; font-size: 15px">Get the book</a>
+<a class="plain btn" href="https://livebook.manning.com/book/machine-learning-platform-engineering" style="padding: 13px 20px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); font-weight: 600; font-size: 15px">Read on liveBook</a>
+</div>
+<a class="plain" href="https://search.kyobobook.co.kr/search?keyword=9791124309117" style="margin-top: 8px; align-self: flex-start; display: flex; align-items: center; gap: 14px; padding: 10px 16px 10px 10px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink)">
+<img loading="lazy" src="/images/2026/ml-platform-engineering-ko.jpg" alt="Cover of the Korean edition, 머신러닝 플랫폼 엔지니어링" style="width: 56px; height: auto; display: block; border: 2px solid var(--ink)">
+<span style="display: flex; flex-direction: column; gap: 2px"><span style="font-family: 'JetBrains Mono', monospace; font-size: 12px">ALSO IN KOREAN</span><span lang="ko" style="font-family: 'Space Grotesk', 'Noto Sans KR', sans-serif; font-size: 17px; font-weight: 700">머신러닝 플랫폼 엔지니어링</span><span style="font-size: 13px">Translated by 허정준</span></span>
+</a>
+</div>
+</article>
 
-            <p>
-              Been meaning to do something useful with functional programming or simply itching for a fun weekend side-project? This book might be just for you. Come rediscover the joy of programming and what it feels like to be a beginner again.
-            </p>
-        </div>  
-      </div>
-      <div class="spacing"></div>
-    </div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px">
+<article class="card" style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="height: 280px; background: var(--rose); border: 2px solid var(--ink); padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; position: relative"><span style="position: absolute; top: 10px; left: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 2px 6px; background: var(--bg); border: 2px solid var(--ink)">MANNING · 2016</span><img loading="lazy" src="/images/2026/little-elixir-otp-guidebook.jpg" alt="Cover of The Little Elixir &amp; OTP Guidebook" style="height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink)"></div>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700">The Little Elixir &amp; OTP Guidebook</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Fault-tolerant, concurrent programs with Elixir and OTP. 6,900+ copies; used in university courses.</p>
+<a href="https://www.manning.com/books/the-little-elixir-and-otp-guidebook" style="font-size: 15px; font-weight: 600; margin-top: auto; padding: 8px 0">View book</a>
+</article>
+<article class="card" style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="height: 280px; background: var(--mint); border: 2px solid var(--ink); padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; position: relative"><span style="position: absolute; top: 10px; left: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 2px 6px; background: var(--bg); border: 2px solid var(--ink)">MANNING LIVEPROJECT · COURSE</span><img loading="lazy" src="/images/2026/kubeflow-liveproject.png" alt="Cover of Building an ML Pipeline with Kubeflow" style="height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink)"></div>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700">Building an ML Pipeline with Kubeflow</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Hands-on course: ship a licence-plate recognition model through a composable Kubeflow pipeline. 550+ learners.</p>
+<a href="https://www.manning.com/liveproject/building-an-ml-pipeline-with-kubeflow" style="font-size: 15px; font-weight: 600; margin-top: auto; padding: 8px 0">View course</a>
+</article>
+<article class="card" style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); padding: 22px; display: flex; flex-direction: column; gap: 14px">
+<div style="height: 280px; background: var(--lilac); border: 2px solid var(--ink); padding: 20px; box-sizing: border-box; display: flex; align-items: center; justify-content: center; position: relative"><span style="position: absolute; top: 10px; left: 10px; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 2px 6px; background: var(--bg); border: 2px solid var(--ink)">PRAGMATIC BOOKSHELF · 2017</span><img loading="lazy" src="/images/2026/mastering-ruby-closures.jpg" alt="Cover of Mastering Ruby Closures" style="height: 100%; width: auto; max-width: 100%; object-fit: contain; display: block; border: 2px solid var(--ink); box-shadow: 5px 5px 0 var(--ink)"></div>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 20px; font-weight: 700">Mastering Ruby Closures</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Blocks, procs and lambdas, demystified. Grew out of my self-published <a href="https://leanpub.com/therubyclosuresbook">The Ruby Closures Book</a>; 1,000+ copies.</p>
+<a href="https://www.oreilly.com/library/view/mastering-ruby-closures/9781680502909/" style="font-size: 15px; font-weight: 600; margin-top: auto; padding: 8px 0">View book</a>
+</article>
+</div>
+</section>
 
-    <div class="container">
-      <div class="spacing"></div>
-      <div class="row">
-        <div class="col-md-6 text-center">
-          <img width="250" src="https://images-na.ssl-images-amazon.com/images/I/518RcO9WjwL._SX415_BO1,204,203,200_.jpg">
-          <br/>
-          <a href="https://pragprog.com/book/btrubyclo/mastering-ruby-closures" class="btn" target=_blank><i class="fa fa-2x fa-diamond"></i> Go To Book Site</a>
-        </div>  
+<!-- KNOWLEDGE -->
+<section id="knowledge" style="max-width: 1200px; margin: 0 auto; padding: 112px 32px 32px; display: flex; flex-direction: column; gap: 40px">
+<div style="display: flex; flex-direction: column; gap: 14px; max-width: 680px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 10px; background: var(--butter); border: 2px solid var(--ink)">03 / KNOWLEDGE</span>
+<h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 42px; line-height: 1.08; letter-spacing: -0.025em">What I know deeply, and what I'm learning in public.</h2>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px">
+<div class="card" style="border: 2px solid var(--ink); background: var(--lilac); box-shadow: 6px 6px 0 var(--ink); padding: 26px; display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="width: 40px; height: 40px; border-radius: 50%; background: var(--bg); border: 2px solid var(--ink)"></span>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Deep RL for trading</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Policy learning on noisy, non-stationary markets: ensembles, overlays, and keeping backtests honest.</p>
+</div>
+<div class="card" style="border: 2px solid var(--ink); background: var(--pink); box-shadow: 6px 6px 0 var(--ink); padding: 26px; display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="width: 40px; height: 40px; background: var(--bg); border: 2px solid var(--ink); box-sizing: border-box"></span>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Production LLM systems</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Agentic workflows, hybrid RAG and evals in a regulated bank. Now digging into inference engines like vLLM.</p>
+</div>
+<div class="card" style="border: 2px solid var(--ink); background: var(--mint); box-shadow: 6px 6px 0 var(--ink); padding: 26px; display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="width: 30px; height: 30px; margin: 5px; background: var(--bg); border: 2px solid var(--ink); transform: rotate(45deg)"></span>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">ML platforms &amp; MLOps</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Kubeflow, MLflow, Feast, BentoML on Kubernetes: the internal platform that gets models from notebook to production.</p>
+</div>
+<div class="card" style="border: 2px solid var(--ink); background: var(--sky); box-shadow: 6px 6px 0 var(--ink); padding: 26px; display: flex; flex-direction: column; gap: 12px">
+<span aria-hidden="true" style="width: 48px; height: 26px; margin: 7px 0; border-radius: 26px 26px 0 0; background: var(--bg); border: 2px solid var(--ink); box-sizing: border-box"></span>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Concurrent systems</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Elixir, OTP and the BEAM: supervision trees and designing for failure.</p>
+</div>
+</div>
+</section>
 
-        <div class="col-md-6">
-          <h2 class="text-center">The Ruby Closures Book</h2>
+<!-- TALKS + WRITING -->
+<section id="talks" style="max-width: 1200px; margin: 0 auto; padding: 112px 32px 32px; display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 40px">
+<div style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); padding: 32px; display: flex; flex-direction: column; gap: 20px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 10px; background: var(--sky); border: 2px solid var(--ink)">04 / SPEAKING</span>
+<h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 32px; letter-spacing: -0.02em">Talks</h2>
+<ul style="list-style: none; margin: 0; padding: 0">
+<li style="padding: 16px 0; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 16px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Simplify generative apps with Vertex AI Search as your RAG system</span><span style="font-size: 14px">Google Cloud Summit Jakarta</span></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; align-self: flex-start; padding: 2px 8px; background: var(--butter); border: 2px solid var(--ink)">2024</span></li>
+<li style="padding: 16px 0; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 16px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">A fault-tolerant worker pool with OTP</span><span style="font-size: 14px">Erlang User Conference, Stockholm</span></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; align-self: flex-start; padding: 2px 8px; background: var(--mint); border: 2px solid var(--ink)">2017</span></li>
+<li style="padding: 16px 0; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 16px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Rubyists Have a Sip of Elixir</span><span style="font-size: 14px">RubyConf, San Diego</span></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; align-self: flex-start; padding: 2px 8px; background: var(--pink); border: 2px solid var(--ink)">2014</span></li>
+<li style="padding: 16px 0; border-top: 2px solid var(--ink); display: flex; justify-content: space-between; gap: 16px"><span style="display: flex; flex-direction: column; gap: 2px"><span style="font-size: 16px; font-weight: 600">Ruby Elixir Polyglotting FTW</span><span style="font-size: 14px">Red Dot Ruby Conference, Singapore</span></span><span style="font-family: 'JetBrains Mono', monospace; font-size: 13px; align-self: flex-start; padding: 2px 8px; background: var(--pink); border: 2px solid var(--ink)">2014</span></li>
+</ul>
+</div>
+<div style="border: 2px solid var(--ink); background: #FFFFFF; box-shadow: 6px 6px 0 var(--ink); padding: 32px; display: flex; flex-direction: column; gap: 20px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 10px; background: var(--lilac); border: 2px solid var(--ink)">05 / WRITING</span>
+<h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 32px; letter-spacing: -0.02em">Selected writing</h2>
+<ul style="list-style: none; margin: 0; padding: 0">
+<li style="padding: 16px 0; border-top: 2px solid var(--ink); display: flex; flex-direction: column; gap: 4px"><a href="https://medium.com/@bentanweihao" style="font-size: 16px; font-weight: 600">Field guides to production AI</a><span style="font-size: 14px">Medium · Kubeflow, Feast, YOLOv8, OCR, Vertex AI</span></li>
+<li style="padding: 16px 0; border-top: 2px solid var(--ink); display: flex; flex-direction: column; gap: 4px"><a href="https://www.sitepoint.com/author/btan/" style="font-size: 16px; font-weight: 600">17+ articles on Ruby, concurrency and FP</a><span style="font-size: 14px">SitePoint</span></li>
+<li style="padding: 16px 0; border-top: 2px solid var(--ink); display: flex; flex-direction: column; gap: 4px"><a href="/blog" style="font-size: 16px; font-weight: 600">The archive: Elixir, Ruby, Elm and tooling</a><span style="font-size: 14px">benjamintan.io/blog · 2014–2019</span></li>
+</ul>
+<p style="margin: 0; font-size: 14px">Also published on DigitalOcean, Nitrous and Neo.</p>
+</div>
+</section>
 
-          <p><strong>Get the book at <a href="https://pragprog.com/book/btrubyclo/mastering-ruby-closures" target=_blank>Pragmatic Programmers</a> today!
-          </p>
+<!-- CODE -->
+<section id="oss" aria-labelledby="code-h" style="max-width: 1200px; margin: 0 auto; padding: 112px 32px 32px; display: flex; flex-direction: column; gap: 32px">
+<div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-end; gap: 24px">
+<div style="display: flex; flex-direction: column; gap: 14px; max-width: 640px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 10px; background: var(--mint); border: 2px solid var(--ink)">06 / OPEN SOURCE</span>
+<h2 id="code-h" style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 42px; line-height: 1.08; letter-spacing: -0.025em">I fix the tools I use.</h2>
+<p style="margin: 0; font-size: 16px; line-height: 1.6">Merged pull requests across the projects I've built on, from Elixir and Phoenix to Kubeflow, Feast and BentoML.</p>
+</div>
+<div style="display: flex; gap: 16px; flex-wrap: wrap">
+<div style="border: 2px solid var(--ink); background: var(--pink); box-shadow: 6px 6px 0 var(--ink); padding: 18px 22px; display: flex; flex-direction: column"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; line-height: 1">107</span><span style="font-size: 14px">merged PRs</span></div>
+<div style="border: 2px solid var(--ink); background: var(--sky); box-shadow: 6px 6px 0 var(--ink); padding: 18px 22px; display: flex; flex-direction: column"><span style="font-family: 'Space Grotesk', sans-serif; font-size: 36px; font-weight: 700; line-height: 1">53</span><span style="font-size: 14px">projects</span></div>
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; align-items: start">
+<div class="card" style="border: 2px solid var(--ink); background: var(--mint); box-shadow: 6px 6px 0 var(--ink); padding: 26px; display: flex; flex-direction: column; gap: 14px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 2px 8px; background: var(--bg); border: 2px solid var(--ink)">2018 — now</span>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">MLOps &amp; AI</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Fixes and features in the stack I build platforms on, from a Feast UI feature to Kubeflow and BentoML deployment fixes.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px">
+<a class="plain btn" href="https://github.com/kubeflow/kubeflow/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Kubeflow</a>
+<a class="plain btn" href="https://github.com/kubeflow/pipelines/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Kubeflow Pipelines</a>
+<a class="plain btn" href="https://github.com/kserve/kserve/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">KServe</a>
+<a class="plain btn" href="https://github.com/feast-dev/feast/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Feast</a>
+<a class="plain btn" href="https://github.com/bentoml/BentoML/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">BentoML</a>
+<a class="plain btn" href="https://github.com/bentoml/Yatai/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Yatai</a>
+<a class="plain btn" href="https://github.com/tensorflow/tfx/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">TFX</a>
+<a class="plain btn" href="https://github.com/tensorflow/tensorflow/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">TensorFlow</a>
+<a class="plain btn" href="https://github.com/h2oai/h2o-3/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">H2O-3</a>
+<a class="plain btn" href="https://github.com/langchain-ai/langchain/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">LangChain</a>
+<a class="plain btn" href="https://github.com/knative/docs/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Knative</a>
+<a class="plain btn" href="https://github.com/kubernetes-sigs/kustomize/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Kustomize</a>
+</div>
+</div>
+<div class="card" style="border: 2px solid var(--ink); background: var(--lilac); box-shadow: 6px 6px 0 var(--ink); padding: 26px; display: flex; flex-direction: column; gap: 14px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 2px 8px; background: var(--bg); border: 2px solid var(--ink)">2013 — 2018</span>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Elixir &amp; the BEAM</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">An early Elixir adopter: docs and code fixes in the language and its ecosystem while writing the Guidebook.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px">
+<a class="plain btn" href="https://github.com/elixir-lang/elixir/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Elixir</a>
+<a class="plain btn" href="https://github.com/phoenixframework/phoenix/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Phoenix</a>
+<a class="plain btn" href="https://github.com/elixir-plug/plug/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Plug</a>
+<a class="plain btn" href="https://github.com/nerves-project/nerves/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Nerves</a>
+<a class="plain btn" href="https://github.com/happi/theBeamBook/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">The BEAM Book</a>
+<a class="plain btn" href="https://github.com/oreillymedia/etudes-for-elixir/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Études for Elixir</a>
+</div>
+</div>
+<div class="card" style="border: 2px solid var(--ink); background: var(--butter); box-shadow: 6px 6px 0 var(--ink); padding: 26px; display: flex; flex-direction: column; gap: 14px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 12px; padding: 2px 8px; background: var(--bg); border: 2px solid var(--ink)">2013 — 2016</span>
+<h3 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-size: 22px; font-weight: 700">Ruby &amp; friends</h3>
+<p style="margin: 0; font-size: 15px; line-height: 1.6">Where it started: Ruby gems, e-commerce and a detour through Elm.</p>
+<div style="display: flex; flex-wrap: wrap; gap: 10px; padding-top: 4px">
+<a class="plain btn" href="https://github.com/spree/spree/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Spree</a>
+<a class="plain btn" href="https://github.com/ruby-concurrency/concurrent-ruby/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">concurrent-ruby</a>
+<a class="plain btn" href="https://github.com/elm/html/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Elm</a>
+<a class="plain btn" href="https://github.com/exercism/elm/pulls?q=is%3Apr+author%3Abenjamintanweihao" style="padding: 7px 12px; background: var(--bg); border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); font-size: 14px; font-weight: 600">Exercism</a>
+</div>
+</div>
+</div>
+<a href="https://github.com/benjamintanweihao" style="align-self: flex-start; font-size: 16px; font-weight: 600; padding: 8px 0">See everything on github.com/benjamintanweihao</a>
+</section>
 
-          <p>
-            I have been a Ruby programmer for quite a number of years, but until recently, I have been blissfully ignorant of one of Ruby's most powerful features. That is, until one day, I saw a co-worker casually write a method that took in a block. Holy ****! I realized at that moment, I had a major gap in my Ruby knowledge.
-          </p>
+<!-- CONTACT -->
+<section id="contact" style="margin-top: 112px; background: var(--ink); color: var(--bg); border-top: 2px solid var(--ink); position: relative; overflow: hidden">
+<div class="deco" aria-hidden="true" style="position: absolute; top: -80px; right: 8%; width: 200px; height: 200px; border-radius: 50%; background: var(--pink)"></div>
+<div class="deco" aria-hidden="true" style="position: absolute; bottom: -40px; right: 26%; width: 120px; height: 120px; background: var(--mint); transform: rotate(20deg)"></div>
+<div style="max-width: 1200px; margin: 0 auto; padding: 96px 32px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-end; justify-content: space-between; position: relative">
+<div style="flex: 999 1 520px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+<span style="align-self: flex-start; font-family: 'JetBrains Mono', monospace; font-size: 13px; padding: 5px 10px; background: var(--butter); color: var(--ink)">07 / CONTACT</span>
+<h2 style="margin: 0; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: clamp(2.2rem, 4.5vw, 3.75rem); line-height: 1.05; letter-spacing: -0.03em">Building something with RL, ML platforms or a book in you?</h2>
+<p style="margin: 0; font-size: 18px; line-height: 1.6; max-width: 560px">I'm open to talks, writing collaborations and advisory conversations.</p>
+</div>
+<div style="flex: 1 1 300px; min-width: 0; display: flex; flex-direction: column; gap: 12px; font-size: 17px; font-weight: 600">
+<a class="plain btn" href="mailto:benjamintanweihao@gmail.com" style="padding: 14px 18px; background: var(--pink); border: 2px solid var(--bg); box-shadow: 4px 4px 0 var(--bg); display: flex; justify-content: space-between"><span>Email</span><span aria-hidden="true">→</span></a>
+<a class="plain btn" href="https://www.linkedin.com/in/benjamintanwh/" style="padding: 14px 18px; background: var(--sky); border: 2px solid var(--bg); box-shadow: 4px 4px 0 var(--bg); display: flex; justify-content: space-between"><span>LinkedIn</span><span aria-hidden="true">→</span></a>
+<a class="plain btn" href="https://github.com/benjamintanweihao" style="padding: 14px 18px; background: var(--mint); border: 2px solid var(--bg); box-shadow: 4px 4px 0 var(--bg); display: flex; justify-content: space-between"><span>GitHub</span><span aria-hidden="true">→</span></a>
+<a class="plain btn" href="https://medium.com/@bentanweihao" style="padding: 14px 18px; background: var(--butter); border: 2px solid var(--bg); box-shadow: 4px 4px 0 var(--bg); display: flex; justify-content: space-between"><span>Medium</span><span aria-hidden="true">→</span></a>
+</div>
+</div>
+</section>
+</main>
 
-          <p>
-            Sure, I knew how to use blocks, and vaguely knew how to use lambdas in Rails scopes. But who was I kidding? I was never going to be a competent Ruby programmer if I didn't fix this.
-          </p>
+<footer style="background: var(--ink); color: var(--bg); border-top: 2px solid var(--bg)">
+<div style="max-width: 1200px; margin: 0 auto; padding: 24px 32px; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-family: 'JetBrains Mono', monospace; font-size: 13px">
+<span>© 2026 Benjamin Tan Wei Hao</span>
+<span>Made in Singapore</span>
+</div>
+</footer>
 
-          <p>
-            Here's the thing. I spoke to a few of my Ruby programmer friends, and guess what, the situation is the same. If you are like that then this <a href="https://pragprog.com/book/btrubyclo/mastering-ruby-closures" target=_blank>book</a> is for you!
-          </p>
-        </div>  
-      </div>
-      <div class="spacing"></div>
-    </div>
-  </section>
-
-  <!-- Articles -->
-  <section id="articles">
-    <div class="container">
-      <div class="spacing"></div>
-      <div class="row">
-
-        <div class="col-md-12 text-center">
-          <h2 >On Writing.</h2>
-           <p>Some of the places where my writing has been featured:</p>
-            <ul class="list-inline articles-btns">
-              <li><a href="https://www.sitepoint.com/author/btan"><img src="../images/articles/sitepoint.png" alt="Sitepoint" class="img-responsive"></a></li>
-              <li><a href="https://www.digitalocean.com/community/tutorials/how-to-optimize-unicorn-workers-in-a-ruby-on-rails-app"><img src="../images/articles/digitalocean.png" alt="" class="img-responsive"></a></li>
-              <li><img src="../images/articles/nitrous.png" class="img-responsive" alt=""></li>
-              <li><img src="../images/articles/neo.svg" alt="" class="img-responsive"></li>
-            </ul>
-        </div>  
-      </div>
-      <div class="spacing"></div>
-    </div>
-  </section>
-
-  <!-- Speaking -->
-  <section id="speaking">
-    <div class="container">
-      <div class="spacing"></div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <h2 >On Speaking.</h2>
-           <p>Conferences I have spoken at:</p>
-            <ul class="list-inline speaking-btns">
-              <li><a href="http://www.erlang-factory.com/euc2017/benjamin-tan" target=_blank><img src="../images/speaking/euc.png" alt="Erlang User Conference"></a></li>
-              <li><a href="http://confreaks.com/videos/5078-RubyConf2014-rubyists-have-a-sip-of-elixir" target=_blank><img src="../images/speaking/rubyconf2014.png" alt="Ruby Conf"></a></li>
-              <li><a href="http://confreaks.com/videos/3845-rdrc2014-ruby-elixir-polyglotting-ftw" target=_blank><img src="../images/speaking/reddotrubyconf.png" alt="Red Dot Ruby Conf"></a></li>
-              <li><a href="https://www.youtube.com/watch?v=vS47DS3tn0k" target=_blank><img src="../images/speaking/geekcampsg.png" alt="Geekcamp SG"></a></li>
-            </ul>
-        </div>  
-      </div>
-      <div class="spacing"></div>
-    </div>
-  </section>
-
-  <!-- Coding -->
-  <section id="coding">
-    <div class="container">
-      <div class="spacing"></div>
-      <div class="row">
-        <div class="col-md-12 text-center">
-          <h2 >On Coding.</h2>
-        </div>
-      </div>
-      <div class="row">
-        <div class="col-md-4 text-center">
-          <h3>CodeRippa</h3>
-          <p>Takes any source code (up to 150 languages) and turn it into a <em>beautiful</em> PDF.</p>
-	  <a href="https://github.com/benjamintanweihao/code_rippa" target=_blank><img src="../images/coding/coderippa.png" alt=""></a>
-        </div>
-
-        <div class="col-md-4 text-center">
-          <h3>Bookee|SG</h3>
-          <p>Search for books in the National Library Board of Singapore easily.</p>
-          <a href="https://play.google.com/store/apps/details?id=com.benjamintanweihao.bookeesg"><img src="../images/coding/bookeesg.png" alt=""></a>
-        </div>
-
-        <div class="col-md-4 text-center">
-          <h3>Open Source Contributions</h3>
-          <p>Projects that I've given back to:</p>
-          <ul class="list-unstyled coding-btns">
-            <li><a href="http://www.rubyonrails.org" target=_blank><img src="../images/coding/rails.png" alt="Ruby on Rails"></a></li>
-            <li><a href="http://www.elixir-lang.org" target=_blank><img src="../images/coding/elixir.png" alt="Elixir"></a></li>
-            <li><a href="https://spreecommerce.com/" target=_blank><img src="../images/coding/spree.png" alt="Spree Commerce"></a></li>
-            <li><a href="https://github.com/phoenixframework" target=_blank><img src="../images/coding/phoenix.png" alt="Phoenix Framework"></a></li>
-          </ul>
-        </div>
-      </div> 
-
-      <div class="col-md-12 text-center">
-        <a href="https://github.com/benjamintanweihao" class="btn" target=_blank><i class="fa fa-2x fa-github"></i>My Github Profile</a> 
-      </div>
-      <div class="spacing"></div>
-    </div>
-  </section>
-
-  <%= partial "footer" %>
-  <%= partial "javascripts" %>
+</div>
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce) return;
+  var letters = [[[2, 17], [9, 17], [2, 24], [16, 24], [2, 31], [9, 31], [2, 38], [16, 38], [2, 45], [9, 45]], [[30, 17], [37, 17], [44, 17], [30, 24], [30, 31], [37, 31], [30, 38], [30, 45], [37, 45], [44, 45]], [[58, 17], [86, 17], [58, 24], [65, 24], [86, 24], [58, 31], [72, 31], [86, 31], [58, 38], [79, 38], [86, 38], [58, 45], [86, 45]], [[114, 17], [114, 24], [114, 31], [100, 38], [114, 38], [107, 45]], [[135, 17], [128, 24], [142, 24], [128, 31], [135, 31], [142, 31], [128, 38], [142, 38], [128, 45], [142, 45]], [[156, 17], [184, 17], [156, 24], [163, 24], [177, 24], [184, 24], [156, 31], [170, 31], [184, 31], [156, 38], [184, 38], [156, 45], [184, 45]], [[198, 17], [205, 17], [212, 17], [205, 24], [205, 31], [205, 38], [198, 45], [205, 45], [212, 45]], [[226, 17], [254, 17], [226, 24], [233, 24], [254, 24], [226, 31], [240, 31], [254, 31], [226, 38], [247, 38], [254, 38], [226, 45], [254, 45]], [[289, 17], [296, 17], [303, 17], [296, 24], [296, 31], [296, 38], [296, 45]], [[324, 17], [317, 24], [331, 24], [317, 31], [324, 31], [331, 31], [317, 38], [331, 38], [317, 45], [331, 45]], [[345, 17], [373, 17], [345, 24], [352, 24], [373, 24], [345, 31], [359, 31], [373, 31], [345, 38], [366, 38], [373, 38], [345, 45], [373, 45]]];
+  var colors = [0, 1, 2, 3, 4, 5, 0, 1, 2, 3, 4];
+  var pal = ['#F6A9C8', '#93DEC6', '#6CC6EE', '#CDB8F2', '#FFD17E', '#EE6F8C'];
+  var box = document.getElementById('logo-box');
+  var svg = box && box.querySelector('svg');
+  if (!box || !svg) return;
+  var parts = [], active = -1, timer = null;
+  function spawn(li) {
+    var pts = letters[li], o = pts[Math.floor(Math.random() * pts.length)];
+    var ang = -0.2 - Math.random() * 1.0, dist = 50 + Math.random() * 90;
+    var el = document.createElement('span');
+    el.className = 'px';
+    box.appendChild(el);
+    return { el: el, x: o[0], y: o[1], c: colors[li], dx: Math.cos(ang) * dist, dy: Math.sin(ang) * dist, t: 0, life: 14 + Math.floor(Math.random() * 10) };
+  }
+  function draw() {
+    var k = svg.getBoundingClientRect().width / 385 || 1;
+    parts.forEach(function (p) {
+      var step = Math.min(5, Math.floor(p.t * 6));
+      p.el.style.left = Math.round((p.x + p.dx * p.t) * k) + 'px';
+      p.el.style.top = Math.round((p.y + p.dy * p.t) * k) + 'px';
+      p.el.style.background = pal[(p.c + step) % 6];
+      p.el.style.opacity = p.t > 0.8 ? 0.4 : 1;
+    });
+  }
+  function tick() {
+    if (active >= 0) parts.push(spawn(active));
+    parts = parts.filter(function (p) {
+      p.t += 1 / p.life;
+      if (p.t >= 1) { p.el.remove(); return false; }
+      return true;
+    });
+    draw();
+    if (active < 0 && parts.length === 0) { clearInterval(timer); timer = null; }
+  }
+  function clear() {
+    active = -1;
+    parts.forEach(function (p) { p.el.remove(); });
+    parts = [];
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+  Array.prototype.forEach.call(svg.querySelectorAll('g[data-li]'), function (g) {
+    var li = +g.getAttribute('data-li');
+    g.addEventListener('mouseenter', function () {
+      active = li;
+      for (var i = 0; i < 3; i++) parts.push(spawn(li));
+      draw();
+      if (!timer) timer = setInterval(tick, 70);
+    });
+    g.addEventListener('mouseleave', clear);
+  });
+})();
+</script>
 </body>
 </html>
